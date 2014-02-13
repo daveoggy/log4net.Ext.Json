@@ -34,7 +34,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
-    <OutputPath>..\..\..\builds\log4net.Ext.Json\1.2.13\$(TargetFrameworkVersion)$(TargetCompactFramework)$(TargetFrameworkProfile)\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
