@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.vs2010", "..\..\log
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0", "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0.csproj", "{06A52FA9-985D-455A-A7EE-EF6179B26919}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.10.vs2010.net.2.0", "log4net.Ext.Json.1.2.10.vs2010.net.2.0.csproj", "{3F99C574-3288-4E22-9736-3A08182E408E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{06A52FA9-985D-455A-A7EE-EF6179B26919}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06A52FA9-985D-455A-A7EE-EF6179B26919}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06A52FA9-985D-455A-A7EE-EF6179B26919}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F99C574-3288-4E22-9736-3A08182E408E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F99C574-3288-4E22-9736-3A08182E408E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F99C574-3288-4E22-9736-3A08182E408E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F99C574-3288-4E22-9736-3A08182E408E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

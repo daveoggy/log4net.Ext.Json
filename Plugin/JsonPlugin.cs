@@ -26,6 +26,10 @@ using log4net.Repository;
 using log4net.Util;
 using log4net.Util.TypeConverters;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Plugin
 {
     /// <summary>

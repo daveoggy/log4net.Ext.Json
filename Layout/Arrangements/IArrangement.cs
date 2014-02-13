@@ -21,6 +21,10 @@ using System.Collections.Generic;
 using log4net.Layout.Members;
 using log4net.Util;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout.Arrangements
 {
 

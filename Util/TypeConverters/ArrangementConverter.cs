@@ -131,7 +131,11 @@ namespace log4net.Util.TypeConverters
             }
             catch (Exception x)
             {
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error(String.Format("Unable to parse '{0}'", source), x);
+#else
                 LogLog.Error(GetType(), String.Format("Unable to parse '{0}'", source), x);
+#endif
                 return null;
             }
 

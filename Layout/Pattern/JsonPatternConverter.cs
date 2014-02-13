@@ -28,6 +28,10 @@ using log4net.Util;
 using log4net.Util.TypeConverters;
 using log4net.Util.Serializer;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout.Pattern
 {
     /// <summary>
@@ -149,9 +153,16 @@ namespace log4net.Layout.Pattern
         /// If a component implements this interface then this method must be called
         /// after its properties have been set before the component can be used.
         /// </para>
+        /// <para>
+        /// Please note that properties are only supported with log4net 1.2.11 and above.
+        /// </para>
         /// </remarks>
         public virtual void ActivateOptions()
         {
+#if LOG4NET_1_2_10_COMPATIBLE
+            var converters = new ConverterInfo[0];
+            var arrangement = null as IArrangement;
+#else
             // this allows the serializer to be injected easily
             var factory = (ISerializerFactory)Properties["serializerfactory"];
             if (factory != null) Renderer = new JsonObjectRenderer() { Factory = factory };
@@ -160,6 +171,7 @@ namespace log4net.Layout.Pattern
             Fetcher = (IRawLayout)Properties["fetcher"] ?? Fetcher;
             var converters = ((ConverterInfo[])Properties["converters"]);
             var arrangement = (IArrangement)Properties["arrangement"];
+#endif
 
             Prepare(Option, Members, converters, arrangement);
         }

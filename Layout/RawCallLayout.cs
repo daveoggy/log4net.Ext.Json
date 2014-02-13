@@ -23,6 +23,10 @@ using System.IO;
 using log4net.Core;
 using log4net.Util;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout
 {
     /// <summary>
@@ -144,8 +148,10 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.FullInfo, "location", "l");
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.LineNumber, "line", "L");
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.MethodName, "method", "M");
+#if !LOG4NET_1_2_10_COMPATIBLE
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.StackFrames, "stacktrace");
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.StackFrames, "stacktracedetail");
+#endif
             RawCallLayout.AddCalls(ref calls, e => (e.TimeStamp - LoggingEvent.StartTime).TotalMilliseconds, "timestamp", "r");
             RawCallLayout.AddCalls(ref calls, e => Environment.NewLine, "newline", "n");
             RawCallLayout.AddCalls(ref calls, e => s_processId, "processid"/*custom*/, "pid"/*custom*/);
@@ -245,16 +251,22 @@ namespace log4net.Layout
         /// <remarks>
         /// Properties["option"] (a <see cref="String"/>) can be used to set an option on the converter instance.
         /// </remarks>
+        /// <remarks>
+        /// Properties are only supported in log4net 1.2.11 and later.
+        /// </remarks>
         /// <param name="info"></param>
         public RawCallLayout(ConverterInfo info)
         {
             Name = info.Name;
 
             var conv = (PatternConverter)Activator.CreateInstance(info.Type);
+
+#if !LOG4NET_1_2_10_COMPATIBLE
             conv.Properties = info.Properties;
 
             if (info.Properties.Contains("option"))
                 conv.Option = Convert.ToString(info.Properties["option"]);
+#endif
 
             if (conv is IOptionHandler)
                 ((IOptionHandler)conv).ActivateOptions();

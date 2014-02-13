@@ -297,12 +297,19 @@ namespace log4net.Layout
         /// </summary>
         /// <param name="info">description of the PatternConverter</param>
         /// <returns>pattern converter set up</returns>
+        /// <remarks>
+        /// <para>
+        /// Please note that properties are only supported with log4net 1.2.11 and above.
+        /// </para>
+        /// </remarks>
         protected virtual PatternConverter CreateSerializer(ConverterInfo info)
         {
             var conv = info.Type == null ? null : Activator.CreateInstance(info.Type) as PatternConverter;
             if (conv == null) conv = new JsonPatternConverter();
-
+            
+#if !LOG4NET_1_2_10_COMPATIBLE
             conv.Properties = info.Properties;
+#endif
 
             return conv;
         }
@@ -313,10 +320,17 @@ namespace log4net.Layout
         /// <param name="conv">serializer to be set up</param>
         /// <param name="converters">converters to be used collected from parent class</param>
         /// <param name="arrangement">arrangement to be used collected from parent class</param>
+        /// <remarks>
+        /// <para>
+        /// Please note that properties are only supported with log4net 1.2.11 and above.
+        /// </para>
+        /// </remarks>
         protected virtual void SetUpSerializer(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement)
         {
+#if !LOG4NET_1_2_10_COMPATIBLE
             conv.Properties["arrangement"] = arrangement;
             conv.Properties["converters"] = converters;
+#endif
 
             IOptionHandler optionHandler = conv as IOptionHandler;
             if (optionHandler != null)

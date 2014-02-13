@@ -24,6 +24,10 @@ using log4net.Layout.Arrangements;
 using log4net.Util;
 using log4net.Util.TypeConverters;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout.Members
 {
     /// <summary>
@@ -240,7 +244,11 @@ namespace log4net.Layout.Members
             }
             catch (Exception x)
             {
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error("Error getting value from NestedLayout", x);
+#else
                 LogLog.Error(GetType(), "Error getting value from NestedLayout", x);
+#endif
                 obj = null;
                 return false;
             }
