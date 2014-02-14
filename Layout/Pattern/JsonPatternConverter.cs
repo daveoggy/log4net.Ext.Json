@@ -43,7 +43,7 @@ namespace log4net.Layout.Pattern
     /// Use it in a custom <see cref="PatternLayout.ConversionPattern" /> like this: "%serialize{DEFAULT;PID:processid}"
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class JsonPatternConverter : PatternLayoutConverter, IObjectRenderer, IOptionHandler
+    public class JsonPatternConverter : PatternLayoutConverter, IObjectRenderer, IOptionHandler, ISerializingPatternConverter
     {
         #region Properties
 
@@ -63,6 +63,8 @@ namespace log4net.Layout.Pattern
         /// These members can be arranged - see <see cref="Prepare"/>
         /// </summary>
         public IList<IMember> Members { get; private set; }
+
+        public ConverterInfo[] Converters { get; private set; }
 
         #endregion
 
@@ -124,8 +126,8 @@ namespace log4net.Layout.Pattern
         /// <param name="writer">writer to write obj to</param>
         public void RenderObject(RendererMap map, object obj, TextWriter writer)
         {
-            var renderer = Renderer 
-                ?? (map == null ? null : map.Get(obj)) 
+            var renderer = Renderer
+                ?? (map == null ? null : map.Get(obj))
                 ?? JsonObjectRenderer.Default ?? map.DefaultRenderer;
 
             renderer.RenderObject(map, obj, writer);
@@ -160,7 +162,7 @@ namespace log4net.Layout.Pattern
         public virtual void ActivateOptions()
         {
 #if LOG4NET_1_2_10_COMPATIBLE
-            var converters = new ConverterInfo[0];
+            var converters = Converters;
             var arrangement = null as IArrangement;
 #else
             // this allows the serializer to be injected easily
@@ -169,7 +171,7 @@ namespace log4net.Layout.Pattern
 
             Renderer = (IObjectRenderer)Properties["renderer"] ?? Renderer;
             Fetcher = (IRawLayout)Properties["fetcher"] ?? Fetcher;
-            var converters = ((ConverterInfo[])Properties["converters"]);
+            var converters = ((ConverterInfo[])Properties["converters"]) ?? Converters;
             var arrangement = (IArrangement)Properties["arrangement"];
 #endif
 
@@ -186,13 +188,10 @@ namespace log4net.Layout.Pattern
         /// <param name="arrangement">Arrangement to organize the members</param>
         protected virtual void Prepare(string option, IList<IMember> members, ConverterInfo[] converters, IArrangement arrangement)
         {
-            bool arranged = false;
-
             if (arrangement != null)
             {
                 arrangement.SetConverters(converters);
                 arrangement.Arrange(members);
-                arranged = true;
             }
 
             if (!String.IsNullOrEmpty(option))
@@ -202,11 +201,10 @@ namespace log4net.Layout.Pattern
                 {
                     arrangement.SetConverters(converters);
                     arrangement.Arrange(members);
-                    arranged = true;
                 }
             }
 
-            if (!arranged)
+            if (Members.Count == 0)
             {
                 // cater for bare defaults
                 arrangement = new DefaultArrangement();
@@ -217,6 +215,9 @@ namespace log4net.Layout.Pattern
 
         #endregion
 
-
+        public void SetConverters(ConverterInfo[] converters)
+        {
+            Converters = converters;
+        }
     }
 }

@@ -65,6 +65,7 @@
     <Compile Include="Layout\Arrangements\NoArrangement.cs" />
     <Compile Include="Layout\Arrangements\OptionArrangement.cs" />
     <Compile Include="Layout\Arrangements\MultipleArrangement.cs" />
+    <Compile Include="Layout\Pattern\ISerializingPatternConverter.cs" />
     <Compile Include="Layout\RawCallLayout.cs" />
     <Compile Include="Layout\RawArrangedLayout.cs" />
     <Compile Include="Layout\SerializedLayout.cs" />

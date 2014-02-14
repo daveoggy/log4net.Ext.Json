@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using log4net.Core;
 using log4net.Layout.Arrangements;
 using log4net.Layout.Members;
@@ -230,12 +231,25 @@ namespace log4net.Layout
             // just to get those converters
             var parser = CreatePatternParser(String.Empty);
 
+#if LOG4NET_1_2_10_COMPATIBLE
+            int convord = 0;
+            var converters = new ConverterInfo[parser.PatternConverters.Count];
+            foreach (DictionaryEntry entry in parser.PatternConverters)
+            {
+                converters[convord++] = new ConverterInfo()
+                {
+                    Name = Convert.ToString(entry.Key),
+                    Type = (Type)entry.Value
+                };
+            }
+#else
             // Extract discovered converters
             var converters = Enumerable.ToArray(
                                 Enumerable.Cast<ConverterInfo>(
                                     parser.PatternConverters.Values
                                 )
                              );
+#endif
 
             var arrangement = new MultipleArrangement();
 
@@ -306,7 +320,7 @@ namespace log4net.Layout
         {
             var conv = info.Type == null ? null : Activator.CreateInstance(info.Type) as PatternConverter;
             if (conv == null) conv = new JsonPatternConverter();
-            
+
 #if !LOG4NET_1_2_10_COMPATIBLE
             conv.Properties = info.Properties;
 #endif
@@ -327,9 +341,25 @@ namespace log4net.Layout
         /// </remarks>
         protected virtual void SetUpSerializer(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement)
         {
+
+            var serializedConv = conv as ISerializingPatternConverter;
+
+            if (serializedConv != null)
+            {
+                serializedConv.SetConverters(converters);
+
+                if (arrangement != null)
+                {
+                    arrangement.SetConverters(converters);
+                    arrangement.Arrange(serializedConv.Members);
+                }
+            }
 #if !LOG4NET_1_2_10_COMPATIBLE
-            conv.Properties["arrangement"] = arrangement;
-            conv.Properties["converters"] = converters;
+            else
+            {
+                conv.Properties["arrangement"] = arrangement;
+                conv.Properties["converters"] = converters;
+            }
 #endif
 
             IOptionHandler optionHandler = conv as IOptionHandler;

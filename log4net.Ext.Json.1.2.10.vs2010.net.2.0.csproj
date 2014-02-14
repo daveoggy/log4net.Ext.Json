@@ -55,7 +55,8 @@
     <DefineConstants>TRACE;LOG4NET_1_2_10_COMPATIBLE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\log4net\1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -64,6 +65,7 @@
     <Compile Include="Layout\Arrangements\NoArrangement.cs" />
     <Compile Include="Layout\Arrangements\OptionArrangement.cs" />
     <Compile Include="Layout\Arrangements\MultipleArrangement.cs" />
+    <Compile Include="Layout\Pattern\ISerializingPatternConverter.cs" />
     <Compile Include="Layout\RawCallLayout.cs" />
     <Compile Include="Layout\RawArrangedLayout.cs" />
     <Compile Include="Layout\SerializedLayout.cs" />
