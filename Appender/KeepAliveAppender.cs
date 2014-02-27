@@ -32,8 +32,8 @@ namespace log4net.Appender
     /// <remarks>
     /// <para>
     /// Without imparting any of the parent <see cref="ForwardingAppender"/>'s features,
-    /// this appender get's itself <see cref="AppenderKeepAlive.Manage"/>d in <see cref="ActivateOptions"/>
-    /// and <see cref="AppenderKeepAlive.Release"/>d in <see cref="OnClose"/>. Any attached appender should 
+    /// this appender get's itself <see cref="KeepAlive.Manage"/>d in <see cref="ActivateOptions"/>
+    /// and <see cref="KeepAlive.Release"/>d in <see cref="OnClose"/>. Any attached appender should 
     /// then receive Alive messages.
     /// </para>
     /// <para>
@@ -81,7 +81,7 @@ namespace log4net.Appender
         {
             base.ActivateOptions();
 
-            AppenderKeepAlive.Instance.Manage(AliveCall, KeepAliveInterval);
+            KeepAlive.Instance.Manage(AliveCall, KeepAliveInterval);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace log4net.Appender
         /// </remarks>
         protected override void OnClose()
         {
-            AppenderKeepAlive.Instance.Release(AliveCall);
+            KeepAlive.Instance.Release(AliveCall);
 
             base.OnClose();
         }

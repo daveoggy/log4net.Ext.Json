@@ -51,15 +51,15 @@ namespace log4net.Util
     /// Additionally the code locks the <see cref="m_calls"/> for any operation with appenders.
     /// </remarks>
     /// <author>Robert Sevcik</author>
-    public sealed class AppenderKeepAlive : IDisposable
+    public sealed class KeepAlive : IDisposable
     {
         /// <summary>
         /// The only single static instance of this class
         /// </summary>
-        public static readonly AppenderKeepAlive Instance = new AppenderKeepAlive();
+        public static readonly KeepAlive Instance = new KeepAlive();
 
         /// <summary>
-        /// Let a callback be called by AppenderKeepAlive regularly;
+        /// Let a callback be called by KeepAlive regularly;
         /// </summary>
         /// <param name="alivecall">callback to be called</param>
         /// <param name="interval">how often</param>
@@ -149,10 +149,10 @@ namespace log4net.Util
             {
                 Stop();
 
-                m_rep = LogManager.GetRepository(typeof(AppenderKeepAlive).Assembly);
+                m_rep = LogManager.GetRepository(typeof(KeepAlive).Assembly);
 
                 m_thread = new Thread(Run);
-                m_thread.Name = typeof(AppenderKeepAlive).FullName;
+                m_thread.Name = typeof(KeepAlive).FullName;
                 m_thread.Priority = ThreadPriority.Lowest;
                 m_thread.IsBackground = true;
                 m_thread.Start();

@@ -78,9 +78,10 @@
     <Compile Include="Layout\Members\Member.cs" />
     <Compile Include="Layout\Arrangements\DefaultArrangement.cs" />
     <Compile Include="Layout\Pattern\JsonPatternConverter.cs" />
+    <Compile Include="Plugin\StampPlugin.cs" />
     <Compile Include="Plugin\JsonPlugin.cs" />
     <Compile Include="Appender\KeepAliveAppender.cs" />
-    <Compile Include="Util\AppenderKeepAlive.cs" />
+    <Compile Include="Util\KeepAlive.cs" />
     <Compile Include="Util\Stamps\AgeReference.cs" />
     <Compile Include="Util\Stamps\PropertyProcessIdStamp.cs" />
     <Compile Include="Util\Stamps\PropertySequenceStamp.cs" />
