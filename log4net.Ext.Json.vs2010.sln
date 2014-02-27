@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11.vs2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11.vs2010.net.2.0", "log4net.Ext.Json.1.2.11.vs2010.net.2.0.csproj", "{ACE30186-0909-49A8-8142-BC6EAD337E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.vs2010", "..\..\log4net\log4net.vs2010.csproj", "{181FE707-E161-4722-9F38-6AAAB6FAA106}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.vs2010", "..\..\..\src\log4net\log4net.vs2010.csproj", "{181FE707-E161-4722-9F38-6AAAB6FAA106}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0", "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0.csproj", "{06A52FA9-985D-455A-A7EE-EF6179B26919}"
 EndProject
