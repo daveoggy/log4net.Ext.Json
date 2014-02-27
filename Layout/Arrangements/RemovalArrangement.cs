@@ -22,6 +22,10 @@ using System.Text.RegularExpressions;
 using log4net.Layout.Members;
 using log4net.Util;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout.Arrangements
 {
     /// <summary>
@@ -79,8 +83,8 @@ namespace log4net.Layout.Arrangements
         /// Remove members whose name matches regular expression
         /// </summary>
         /// <param name="members">values to arrange</param>
-        /// <returns>arranged values</returns>
-        public override void Arrange(IList<IMember> members)
+        /// <param name="converters">ignored</param>
+        public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
             var removals = GetMembersToRemove(members, m_nameRegex);
 

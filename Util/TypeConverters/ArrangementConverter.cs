@@ -18,11 +18,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Layout.Arrangements;
 using log4net.Layout.Members;
+
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
 
 namespace log4net.Util.TypeConverters
 {
@@ -36,17 +41,62 @@ namespace log4net.Util.TypeConverters
         #region Static goodies
 
         /// <summary>
+        /// This is just a hack to grab converters from PatternLayout
+        /// </summary>
+        [ThreadStatic]
+        readonly static ConverterContext s_converter_context = new ConverterContext();
+
+        delegate IArrangement Call(string option);
+
+        class ConverterContext
+        {
+            readonly Stack<ConverterInfo[]> stack = new Stack<ConverterInfo[]>();
+
+            public IArrangement Call(Call call, ConverterInfo[] converters, string option)
+            {
+                stack.Push(converters);
+                try
+                {
+                    return call(option);
+                }
+                finally
+                {
+                    stack.Pop();
+                }
+            }
+
+            public ConverterInfo[] Get()
+            {
+                if (stack.Count != 0)
+                    lock (stack)
+                        if (stack.Count != 0)
+                            return stack.Peek();
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Convert string option into an arrangement using <see cref="ConverterRegistry.GetConvertFrom"/> 
+        /// </summary>
+        /// <param name="option">pattern, see <seealso cref="ConvertFrom"/> for more info on formatting</param>
+        /// <param name="converters">converters to consider, can be null</param>
+        /// <returns>the arrangement instance</returns>
+        public static IArrangement GetArrangement(string option, ConverterInfo[] converters)
+        {
+            var arrangement = s_converter_context.Call(GetArrangementInternal, converters, option);
+            return arrangement;
+        }
+
+        /// <summary>
         /// Convert string option into an arrangement using <see cref="ConverterRegistry.GetConvertFrom"/> 
         /// </summary>
         /// <param name="option">pattern, see <seealso cref="ConvertFrom"/> for more info on formatting</param>
         /// <returns>the arrangement instance</returns>
-        public static IArrangement GetArrangement(string option)
+        protected static IArrangement GetArrangementInternal(string option)
         {
-            var conv = ConverterRegistry.GetConvertFrom(typeof(IArrangement));
-            if (conv != null && conv.CanConvertFrom(typeof(string)))
-                return (IArrangement)conv.ConvertFrom(option);
-            else
-                return null;
+            var arrangement = OptionConverter.ConvertStringTo(typeof(IArrangement), option) as IArrangement;
+            return arrangement;
         }
 
         /// <summary>
@@ -121,7 +171,7 @@ namespace log4net.Util.TypeConverters
             var ps = source as PatternString;
             var str = ps == null ? source as string : ps.Format();
 
-            if (String.IsNullOrEmpty(str))
+            if (str == null)
                 str = "UnknownObject|" + s_coverUp.Replace(Convert.ToString(source), @"\$0");
 
             try
@@ -151,11 +201,12 @@ namespace log4net.Util.TypeConverters
         public IArrangement ParseArangement(string str)
         {
             var match = s_singleMatcher.Match(str);
-            
+
             var name = match.Groups["Name"].Value;
             var op = match.Groups["Op"].Value;
             var value = match.Groups["Value"].Value;
             var option = match.Groups["Option"].Value;
+            var convs = s_converter_context.Get();
 
             if (!match.Success)
             {
@@ -209,33 +260,50 @@ namespace log4net.Util.TypeConverters
                     break;
                 case ":":
                     // just rename members
+                    var cons =
                     ar = new Member()
                     {
                         Name = name,
-                        Option = new Member() { Name = value }
+                        Converters = convs,
+                        Option = new Member()
+                        {
+                            Name = value,
+                            Converters = convs
+                        }
                     };
                     break;
                 case "|":
                     // run a nested pattern layout
                     value = s_brackClean.Replace(value, Brackets);
                     value = s_nameClean.Replace(value, Clean);
+                    var pl = new PatternLayout(value);
+                    if (convs != null) foreach (var conv in convs) pl.AddConverter(conv);
                     ar = new Member()
                     {
                         Name = name,
-                        Option = new PatternLayout(value)
+                        Converters = convs,
+                        Option = pl
                     };
                     break;
                 case "%":
                     // run a nested pattern layout
+                    var pl2 = new PatternLayout(string.Format("%{0}{{{1}}}", value, option));
+                    if (convs != null) foreach (var conv in convs) pl2.AddConverter(conv);
                     ar = new Member()
                     {
                         Name = name,
-                        Option = new PatternLayout(string.Format("%{0}{{{1}}}", value, option))
+                        Converters = convs,
+                        Option = pl2
                     };
                     break;
                 case "=":
                     // a member with an option
-                    ar = new Member() { Name = name, Option = value };
+                    ar = new Member()
+                    {
+                        Name = name,
+                        Converters = convs,
+                        Option = value
+                    };
                     break;
                 default:
                     throw new Exception(String.Format("Unknown arrangement: '{0}{1}'", name, op));
@@ -256,7 +324,7 @@ namespace log4net.Util.TypeConverters
         {
             if (string.IsNullOrEmpty(option)) return null;
 
-            var stack = new MultipleArrangement();
+            var set = new MultipleArrangement();
             int lengthMatched = 0;
 
             foreach (Match match in s_setMatcher.Matches(option))
@@ -285,16 +353,16 @@ namespace log4net.Util.TypeConverters
 
                 var arrangement = ParseArangement(cleanMember);
 
-                stack.AddArrangement(arrangement);
+                set.AddArrangement(arrangement);
             }
 
             if (lengthMatched != option.Length) throw new Exception(String.Format("Unable to parse option: {0}", option));
 
-            return stack.Arrangements.Count == 0
+            return set.Arrangements.Count == 0
                 ? null
-                : stack.Arrangements.Count == 1
-                ? stack.Arrangements[0]
-                : stack;
+                : set.Arrangements.Count == 1
+                ? set.Arrangements[0]
+                : set;
         }
 
         /// <summary>

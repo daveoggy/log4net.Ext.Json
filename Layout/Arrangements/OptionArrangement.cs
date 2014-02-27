@@ -20,6 +20,11 @@
 using System.Collections.Generic;
 using log4net.Layout.Members;
 using log4net.Util.TypeConverters;
+using log4net.Util;
+
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
 
 namespace log4net.Layout.Arrangements
 {
@@ -43,14 +48,14 @@ namespace log4net.Layout.Arrangements
         /// <summary>
         /// Parse the Arrangement string and use the new arrangement instance.
         /// </summary>
-        /// <param name="members"></param>
-        public override void Arrange(IList<IMember> members)
+        /// <param name="members">Members to be arranged</param>
+        /// <param name="converters">inherited converters, can be null</param>
+        public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
-            var arrangement = ArrangementConverter.GetArrangement(Arrangement);
+            var arrangement = ArrangementConverter.GetArrangement(Arrangement, converters);
             if (arrangement != null)
             {
-                arrangement.SetConverters(Converters);
-                arrangement.Arrange(members);
+                arrangement.Arrange(members, converters);
             }
         }
 

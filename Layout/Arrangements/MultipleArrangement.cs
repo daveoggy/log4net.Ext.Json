@@ -17,9 +17,15 @@
 //
 #endregion
 
+using System;
 using System.Collections.Generic;
 using log4net.Layout.Members;
+using log4net.Util;
 using log4net.Util.TypeConverters;
+
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
 
 namespace log4net.Layout.Arrangements
 {
@@ -41,6 +47,11 @@ namespace log4net.Layout.Arrangements
         public IList<IArrangement> Arrangements { get; protected set; }
 
         /// <summary>
+        /// Option to be parsed on arrangement into arrangement
+        /// </summary>
+        public string Option { get; set; }
+
+        /// <summary>
         /// Create instance with <see cref="Arrangements"/> set
         /// </summary>
         public MultipleArrangement()
@@ -52,13 +63,18 @@ namespace log4net.Layout.Arrangements
         /// Simply call each and every one of the <see cref="Arrangements"/>
         /// </summary>
         /// <param name="members">Members to be arranged</param>
-        public override void Arrange(IList<IMember> members)
+        /// <param name="converters">inherited converters, can be null</param>
+        public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
+            if (members == null) throw new ArgumentNullException("memebers");
+
+            var optarrangement = ArrangementConverter.GetArrangement(Option, converters);
+            if (optarrangement != null) optarrangement.Arrange(members, converters);
+
             foreach (var arrangement in Arrangements)
             {
                 if (arrangement == null) continue;
-                arrangement.SetConverters(Converters);
-                arrangement.Arrange(members);
+                arrangement.Arrange(members, converters);
             }
         }
 
@@ -68,7 +84,7 @@ namespace log4net.Layout.Arrangements
         /// <param name="value">The option understood by <see cref="ArrangementConverter.GetArrangement"/></param>
         public override void SetOption(string value)
         {
-            AddArrangement(ArrangementConverter.GetArrangement(value));
+            Option = value;
         }
 
         /// <summary>

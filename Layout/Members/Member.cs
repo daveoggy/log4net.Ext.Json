@@ -65,7 +65,19 @@ namespace log4net.Layout.Members
         /// </summary>
         public IRawLayout Layout { get { return this; } }
 
+        /// <summary>
+        /// Converters to pass to descendants
+        /// </summary>
+        public ConverterInfo[] Converters { get; set; }
+
         #endregion
+
+        /// <summary>
+        /// Create an instance
+        /// </summary>
+        public Member()
+        { 
+        }
 
         #region Implementation of IRawLayout
 
@@ -120,7 +132,7 @@ namespace log4net.Layout.Members
             if (Option is string)
             {
                 // try to parse an arrangement
-                var arrangement = ArrangementConverter.GetArrangement(Option as string);
+                var arrangement = ArrangementConverter.GetArrangement(Option as string, Converters);
                 if (arrangement != null) Option = arrangement;
             }
 
@@ -172,8 +184,7 @@ namespace log4net.Layout.Members
                 var optionArrangemet = (IArrangement)Option;
 
                 var l = new RawArrangedLayout();
-                optionArrangemet.SetConverters(Converters);
-                optionArrangemet.Arrange(l.Members);
+                optionArrangemet.Arrange(l.Members, Converters);
                 Option = l;
             }
 
@@ -191,8 +202,9 @@ namespace log4net.Layout.Members
         /// <summary>
         /// Add this member to the list.
         /// </summary>
-        /// <param name="members">Members to be arranged</param>
-        public override void Arrange(IList<IMember> members)
+        /// <param name="members">Members to be arrangedFetcher</param>
+        /// <param name="converters">ignored</param>
+        public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
             members.Add(this);
         }

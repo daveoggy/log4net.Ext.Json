@@ -8,6 +8,8 @@ This is a later stand-alone dll version. Start experimenting with a config like 
     <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
   </configSections>
   <log4net>
+    <loggerfactory type="log4net.Util.Stamps.StampingLoggerFactory, log4net.Ext.Json">      
+    </loggerfactory>
     <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
       <param name="File" value="log/log" />
       <param name="AppendToFile" value="true" />

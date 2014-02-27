@@ -39,15 +39,9 @@ namespace log4net.Layout.Arrangements
         /// Organize the <see cref="IMember"/>s to be serialized
         /// </summary>
         /// <param name="members">Members to be arranged</param>
-        void Arrange(IList<IMember> members);
-
-        /// <summary>
-        /// Converters should be passed down the chain from the hosting <see cref="SerializedLayout"/>.
-        /// These are then used to render members.
-        /// </summary>
-        /// <param name="converters"></param>
-        void SetConverters(params ConverterInfo[] converters);
-
+        /// <param name="converters">inherited converters, can be null</param>
+        void Arrange(IList<IMember> members, ConverterInfo[] converters);
+        
         /// <summary>
         /// All arrangements can take an option which is handy for XML configuration and to simplify set up.
         /// </summary>

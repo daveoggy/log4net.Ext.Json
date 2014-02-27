@@ -53,18 +53,10 @@ namespace log4net.Layout.Pattern
         public IObjectRenderer Renderer { get; set; }
 
         /// <summary>
-        /// What to render is decided here. By default it is a <see cref="RawArrangedLayout"/> 
-        /// and it's members can be arranged - see <see cref="Prepare"/>
+        /// What to render is decided here. By default it is a <see cref="RawFlatArrangedLayout"/> 
+        /// and it's members can be arranged - see <see cref="ActivateOptions"/>
         /// </summary>
         public IRawLayout Fetcher { get; set; }
-
-        /// <summary>
-        /// If the default <see cref="Fetcher"/> (<see cref="RawArrangedLayout"/>) is used, these are it's Members.
-        /// These members can be arranged - see <see cref="Prepare"/>
-        /// </summary>
-        public IList<IMember> Members { get; private set; }
-
-        public ConverterInfo[] Converters { get; private set; }
 
         #endregion
 
@@ -73,10 +65,7 @@ namespace log4net.Layout.Pattern
         /// </summary>
         public JsonPatternConverter()
         {
-            var dictLayout = new RawArrangedLayout();
-            this.Fetcher = dictLayout;
-            this.Members = dictLayout.Members;
-
+            this.Fetcher = CreateFetcher(); 
             this.Renderer = JsonObjectRenderer.Default;
 
             // we're not going to bother, user decides where the exception will go.
@@ -139,11 +128,12 @@ namespace log4net.Layout.Pattern
 
         /// <summary>
         /// Activate the options that were previously set with calls to properties.
-        /// <see cref="Renderer"/> of type <see cref="IObjectRenderer"/> is taken from Properties["renderer"] if missing
-        /// <see cref="Fetcher"/> of type <see cref="IRawLayout"/> is taken from Properties["fetcher"] if missing
+        /// <see cref="ISerializerFactory"/> can be passed in Properties["serializerfactory"] to the <see cref="JsonObjectRenderer.Factory"/> to manufacture a serializer.
+        /// <see cref="Renderer"/> of type <see cref="IObjectRenderer"/> is taken from Properties["renderer"] if present.
+        /// <see cref="Fetcher"/> of type <see cref="IRawLayout"/> is taken from Properties["fetcher"] if present
         /// <see cref="IArrangement"/> is taken from Properties["arrangement"] and from <i>option</i>.
-        /// Converters to be used in arrangements are taken from Properties["converters"], an array of <see cref="ConverterInfo"/>
-        /// Members are arranged using <see cref="Prepare"/>
+        /// Converters to be used in arrangements are taken from Properties["converters"], an array of <see cref="ConverterInfo"/>.
+        /// Members are arranged using <see cref="SetUp"/> and <see cref="SetUpDefaults"/>
         /// </summary>
         /// <remarks>
         /// <para>
@@ -162,62 +152,70 @@ namespace log4net.Layout.Pattern
         public virtual void ActivateOptions()
         {
 #if LOG4NET_1_2_10_COMPATIBLE
-            var converters = Converters;
+            var converters = null as ConverterInfo[];
             var arrangement = null as IArrangement;
 #else
             // this allows the serializer to be injected easily
             var factory = (ISerializerFactory)Properties["serializerfactory"];
             if (factory != null) Renderer = new JsonObjectRenderer() { Factory = factory };
 
-            Renderer = (IObjectRenderer)Properties["renderer"] ?? Renderer;
-            Fetcher = (IRawLayout)Properties["fetcher"] ?? Fetcher;
-            var converters = ((ConverterInfo[])Properties["converters"]) ?? Converters;
+            Renderer = (IObjectRenderer)Properties["renderer"] ?? Renderer ;
+            Fetcher = (IRawLayout)Properties["fetcher"] ?? Fetcher ?? CreateFetcher();
+            var converters = ((ConverterInfo[])Properties["converters"]);
             var arrangement = (IArrangement)Properties["arrangement"];
 #endif
+            
+            SetUp(arrangement, converters);
 
-            Prepare(Option, Members, converters, arrangement);
+            if (!String.IsNullOrEmpty(Option))
+            {
+                var optarrangement = ArrangementConverter.GetArrangement(Option, converters);
+                SetUp(optarrangement, converters);
+            }
+
+            SetUpDefaults(converters);
         }
-
 
         /// <summary>
-        /// Prepare the Members using arrangements. See <see cref="ActivateOptions"/>
+        /// Arrange <see cref="Fetcher"/>'s members if possible, if it is an <see cref="IRawArrangedLayout"/>.
         /// </summary>
-        /// <param name="option">Option to parse into an additional <see cref="IArrangement"/> using <see cref="ArrangementConverter.GetArrangement"/></param>
-        /// <param name="members">Members to be arranged</param>
-        /// <param name="converters">Converters used for arrangement</param>
-        /// <param name="arrangement">Arrangement to organize the members</param>
-        protected virtual void Prepare(string option, IList<IMember> members, ConverterInfo[] converters, IArrangement arrangement)
+        /// <param name="arrangement">arangement to use, can be null</param>
+        /// <param name="converters">converters to consider, can be null</param>
+        public virtual void SetUp(IArrangement arrangement, ConverterInfo[] converters)
         {
-            if (arrangement != null)
-            {
-                arrangement.SetConverters(converters);
-                arrangement.Arrange(members);
-            }
+            var arrangedFetcher = Fetcher as IRawArrangedLayout;
 
-            if (!String.IsNullOrEmpty(option))
+            if (arrangedFetcher != null && arrangement != null)
             {
-                arrangement = ArrangementConverter.GetArrangement(option);
-                if (arrangement != null)
-                {
-                    arrangement.SetConverters(converters);
-                    arrangement.Arrange(members);
-                }
+                arrangement.Arrange(arrangedFetcher.Members, converters);
             }
+        }
 
-            if (Members.Count == 0)
+        /// <summary>
+        /// Check that there are some members, otherwise apply <see cref="DefaultArrangement"/>
+        /// </summary>
+        /// <param name="converters">converters to consider, can be null</param>
+        public virtual void SetUpDefaults(ConverterInfo[] converters)
+        {
+            var arrangedFetcher = Fetcher as IRawArrangedLayout;
+
+            if (arrangedFetcher != null && arrangedFetcher.Members.Count == 0)
             {
                 // cater for bare defaults
-                arrangement = new DefaultArrangement();
-                arrangement.SetConverters(converters);
-                arrangement.Arrange(members);
+                var arrangement = new DefaultArrangement();
+                arrangement.Arrange(arrangedFetcher.Members, converters);
             }
         }
 
-        #endregion
-
-        public void SetConverters(ConverterInfo[] converters)
+        /// <summary>
+        /// Give us our default <see cref="Fetcher"/>
+        /// </summary>
+        /// <returns>fetcher</returns>
+        protected virtual IRawLayout CreateFetcher()
         {
-            Converters = converters;
+            return new RawFlatArrangedLayout();
         }
+        
+        #endregion
     }
 }

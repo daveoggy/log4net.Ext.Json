@@ -19,31 +19,19 @@
 
 using System.Collections.Generic;
 using log4net.Layout.Members;
-using log4net.ObjectRenderer;
-using log4net.Util;
-using log4net.Layout.Arrangements;
+using log4net.Layout.Pattern;
 
-#if LOG4NET_1_2_10_COMPATIBLE
-using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
-#endif
-
-namespace log4net.Layout.Pattern
+namespace log4net.Layout
 {
     /// <summary>
-    /// This interface loosely binds <see cref="SerializedLayout"/>
-    /// and it's <see cref="SerializedLayout.SerializingConverter"/>
-    /// so that arrangement can be passed efficiently if supported.
+    /// An interface recognized by <see cref="JsonPatternConverter"/> to apply arrangements on it's <see cref="JsonPatternConverter.Fetcher" />
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public interface ISerializingPatternConverter
+    public interface IRawArrangedLayout
     {
         /// <summary>
-        /// This interface loosely binds <see cref="SerializedLayout"/>
-        /// and it's <see cref="SerializedLayout.SerializingConverter"/>
-        /// so that arrangement can be passed efficiently if supported.
+        /// Serialized members to be arranged
         /// </summary>
-        /// <param name="arrangement">arrangement to organize the serialized members, can be null</param>
-        /// <param name="converters">converters to pass to arrangements, can be null</param>
-        void SetUp(IArrangement arrangement, ConverterInfo[] converters);
+        IList<IMember> Members { get; set; }
     }
 }

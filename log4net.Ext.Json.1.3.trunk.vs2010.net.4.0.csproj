@@ -54,13 +54,22 @@
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\log4net\log4net.vs2010.csproj">
+      <Project>{181FE707-E161-4722-9F38-6AAAB6FAA106}</Project>
+      <Name>log4net.vs2010</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Layout\Arrangements\NoArrangement.cs" />
     <Compile Include="Layout\Arrangements\OptionArrangement.cs" />
     <Compile Include="Layout\Arrangements\MultipleArrangement.cs" />
+    <Compile Include="Layout\IRawArrangedLayout.cs" />
+    <Compile Include="Layout\RawFlatArrangedLayout.cs" />
     <Compile Include="Layout\Pattern\ISerializingPatternConverter.cs" />
     <Compile Include="Layout\RawCallLayout.cs" />
     <Compile Include="Layout\RawArrangedLayout.cs" />
@@ -70,6 +79,18 @@
     <Compile Include="Layout\Arrangements\DefaultArrangement.cs" />
     <Compile Include="Layout\Pattern\JsonPatternConverter.cs" />
     <Compile Include="Plugin\JsonPlugin.cs" />
+    <Compile Include="Appender\KeepAliveAppender.cs" />
+    <Compile Include="Util\AppenderKeepAlive.cs" />
+    <Compile Include="Util\Stamps\AgeReference.cs" />
+    <Compile Include="Util\Stamps\PropertyProcessIdStamp.cs" />
+    <Compile Include="Util\Stamps\PropertySequenceStamp.cs" />
+    <Compile Include="Util\Stamps\PropertyTimeStamp.cs" />
+    <Compile Include="Util\Stamps\PropertyStamp.cs" />
+    <Compile Include="Util\Stamps\PropertyValueStamp.cs" />
+    <Compile Include="Util\Stamps\StampDelegate.cs" />
+    <Compile Include="Util\Stamps\StampingLogger.cs" />
+    <Compile Include="Util\Stamps\StampingLoggerFactory.cs" />
+    <Compile Include="Util\Stamps\IStamp.cs" />
     <Compile Include="Util\RawCallDelegate.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\Serializer\ISerializer.cs" />
@@ -90,12 +111,6 @@
     <EmbeddedResource Include="log4net.Ext.Json.README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\log4net\log4net.vs2010.csproj">
-      <Project>{181FE707-E161-4722-9F38-6AAAB6FAA106}</Project>
-      <Name>log4net.vs2010</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

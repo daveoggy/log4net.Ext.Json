@@ -21,6 +21,11 @@ using System;
 using System.Collections.Generic;
 using log4net.Layout.Members;
 using log4net.Util.TypeConverters;
+using log4net.Util;
+
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
 
 namespace log4net.Layout.Arrangements
 {
@@ -61,22 +66,24 @@ namespace log4net.Layout.Arrangements
                 = new Dictionary<string, string>()
                     {
                         {"default",
-                            "Date|%date{o};"
-                            + "Level;"
-                            + "AppDomain;"
-                            + "Logger;"
-                            + "Thread;"
-                            + "Message;"
-                            + "Exception;"                            
+                            "date;"
+                            + "level;"
+                            + "sitename;"
+                            + "logger;"
+                            + "thread;"
+                            + "message;"
+                            + "exception;"     
+                            + "property;"                         
                         },
                         {"nxlog",
-                            "EventTime|%date{o};"
+                            "EventTime:date;"
                             + "Severity:level;"
-                            + "SourceName:appdomain;"
+                            + "SourceName:sitename;"
                             + "Logger;"
                             + "Thread;"
                             + "Message;"
-                            + "Exception;"                                                                     
+                            + "Exception;"         
+                            + "Property;"                                                                  
                         }
                     };
 
@@ -114,7 +121,7 @@ namespace log4net.Layout.Arrangements
         public DefaultArrangement(string def)
         {
             Default = def ?? DefaultDefaultDefault;
-            Config = new Dictionary<string,string>(ConfigDefaults);
+            Config = new Dictionary<string, string>(ConfigDefaults);
         }
 
         #endregion
@@ -127,26 +134,52 @@ namespace log4net.Layout.Arrangements
         /// </summary>
         /// <exception cref="Exception">When the <see cref="Default"/> is not found in <see cref="Config"/></exception>
         /// <param name="members">Members to be arranged</param>
-        public override void Arrange(IList<IMember> members)
+        /// <param name="converters">Converter infos to pass to child arrangements</param>
+        public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
-            string arrangement;
+            var config = Config;
+            string def = Default;
+            string arrangement = null;
 
-            if (Default == null)
+            if (config == null || config.Count == 0)
             {
-                // null is fine, means we'll do nothing much
-                arrangement = null;
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error(String.Format("No defaults are available in this.Config. Default requested: '{0}'", def));
+#else
+                LogLog.Error(GetType(), String.Format("No defaults are available in this.Config. Default requested: '{0}'", def));
+#endif
+                return;
             }
-            else if (!Config.TryGetValue(Default, out arrangement))
+
+            if (def != null && def != DefaultDefaultDefault && !Config.TryGetValue(def, out arrangement))
             {
-                // if a Default is set, it must be present in Config
-                throw new Exception(String.Format("Defaults not found for: '{0}'", Default));
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error(String.Format("Defaults not found for: '{0}'. Default defaults will be used.", def));
+#else
+                LogLog.Error(GetType(), String.Format("Defaults not found for: '{0}'. Default defaults will be used.", def));
+#endif
+                def = DefaultDefaultDefault;
+            }
+
+            if (arrangement == null && !Config.TryGetValue(def, out arrangement))
+            {
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error(String.Format("Defaults not found for: '{0}'. First available defaults will be used.", def));
+#else
+                LogLog.Error(GetType(), String.Format("Defaults not found for: '{0}'. First available defaults will be used.", def));
+#endif
+                foreach (var kvp in config)
+                {
+                    arrangement = kvp.Value;
+                    break;
+                }
             }
 
             // update base option
             base.SetOption(arrangement);
 
             // actuall arrangement is done by the base implementation
-            base.Arrange(members);
+            base.Arrange(members, converters);
         }
 
         /// <summary>

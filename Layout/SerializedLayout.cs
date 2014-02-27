@@ -26,6 +26,10 @@ using log4net.Layout.Pattern;
 using log4net.Util;
 using log4net.Util.TypeConverters;
 
+#if LOG4NET_1_2_10_COMPATIBLE
+using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
+#endif
+
 namespace log4net.Layout
 {
     /// <summary>
@@ -41,14 +45,16 @@ namespace log4net.Layout
     /// Custom <i>renderer</i> and <i>fetcher</i> can be provided if the default 
     /// <see cref="JsonPatternConverter"/> is used or another implementation 
     /// follows this convention:
-    /// log4net property: renderer, type <see cref="log4net.ObjectRenderer.IObjectRenderer" />
-    /// log4net property: fetcher, type <see cref="log4net.Layout.IRawLayout" />
+    /// 
+    /// * log4net property: renderer, type <see cref="log4net.ObjectRenderer.IObjectRenderer" />
+    /// * log4net property: fetcher, type <see cref="log4net.Layout.IRawLayout" />
     /// </para>
     /// <para>
     /// Collected <i>arrangements</i> and <i>converters</i> are also passed as properties and used in 
     /// <see cref="JsonPatternConverter"/>:
-    /// log4net property: arrangement, type <see cref="log4net.Layout.Arrangements.IArrangement" />
-    /// log4net property: converters, type <see cref="log4net.Util.ConverterInfo" />[]
+    /// 
+    /// * log4net property: arrangement, type <see cref="log4net.Layout.Arrangements.IArrangement" />
+    /// * log4net property: converters, type <see cref="ConverterInfo" />[]
     /// </para>
     /// <para>
     /// This class is not concerned with how the data is rendered. It only provides a configuration shortcut
@@ -58,74 +64,90 @@ namespace log4net.Layout
     /// </remarks>
     /// <example>
     /// You can use a default configuration. Note that default default default is used when no other arrangements exist.
-    /// <code>
-    /// &lt;default /&gt; to use the default default members
-    /// &lt;value value="nxlog" /&gt; to use the default members suitable for nxlog
-    /// </code>
+    /// 
+    /// * to use the default default members:
+    /// 
+    ///         <default />
+    /// 
+    /// * to use the default members suitable for nxlog:
+    ///     
+    ///         <default value="nxlog" />
+    /// 
     /// </example>
     /// <example>
     /// You can use member configurations:
-    /// <code>
-    /// &lt;default /&gt; to use a default before any custom members.
-    /// &lt;member value="nxlog" /&gt; to use the default members suitable for nxlog.
-    /// &lt;member&gt; value="nxlog" /&gt; to use the default members suitable for nxlog.
-    /// </code>
+    /// 
+    /// * to use a default before any custom members: 
+    /// 
+    ///         <default />
+    ///         <member value="ProcessID" />
+    ///         <member value="AppName:appdomain" />
+    /// 
     /// </example>
     /// <example>
     /// You can use the pattern configuration to allow simple configurations of complex requirements:
-    /// <code>
-    /// &lt;arrangement value="MyOwnMember:appdomain" /&gt; to add a member with custom name.
-    /// &lt;arrangement value="Day|It is %date{dddd} today" /&gt;. to render members using <see cref="PatternLayout"/>.
-    /// &lt;arrangement value="Host=Name:hostname\;ProcessId\;Memory\;timestamp" /&gt;. to add nested members (note the \;).
-    /// &lt;arrangement value="log4net.Layout.Arrangements.RemovalArrangement!" /&gt;. to add any custom arrangement.
-    /// &lt;arrangement value="log4net.Layout.Arrangements.RemovalArrangement!Message" /&gt;. to add any custom arrangement with an option.
-    /// &lt;arrangement value="Month%date:MMM" /&gt;. to run a <see cref="PatternLayout"/> converter with an option (useful more in conversionPattern).
-    /// &lt;arrangement value="DEFAULT!nxlog" /&gt;. to add a default arrangement.
-    /// &lt;arrangement value="CLEAR" /&gt;. to add remove all members.
-    /// &lt;arrangement value="REMOVE!Source.*" /&gt;. to add remove specific members matching Regex pattern.
-    /// </code>
+    /// 
+    /// * to add a member with custom name:
+    /// 
+    ///         <arrangement value="MyOwnMember:appdomain" />
+    /// * to render members using <see cref="PatternLayout"/>:
+    /// 
+    ///         <arrangement value="Day|It is %date{dddd} today" />
+    /// * to add nested members (note the \;):
+    /// 
+    ///         <arrangement value="Host=Name:hostname\;ProcessId\;Memory\;timestamp" />
+    /// * to add any custom arrangement:
+    /// 
+    ///         <arrangement value="log4net.Layout.Arrangements.RemovalArrangement!" />
+    /// * to add any custom arrangement with an option:
+    /// 
+    ///         <arrangement value="log4net.Layout.Arrangements.RemovalArrangement!Message" />
+    /// * to run a <see cref="PatternLayout"/> converter with an option (useful more in conversionPattern):
+    /// 
+    ///         <arrangement value="Month%date:MMM" />
+    /// * to add a default arrangement:
+    /// 
+    ///         <arrangement value="DEFAULT!nxlog" />
+    /// * to add remove all members:
+    /// 
+    ///         <arrangement value="CLEAR" />
+    /// * to add remove specific members matching Regex pattern:
+    /// 
+    ///         <arrangement value="REMOVE!Source.*" />
+    /// 
     /// </example>
     /// <example>
     /// You can remove members from default:
-    /// <code>
-    /// &lt;default /&gt; to use a default before any custom members.
-    /// &lt;remove value="Message" /&gt; to remove the Message member.
-    /// &lt;arrangement value="Data:message" /&gt; to use reintroduce the message under different name.
-    /// </code>
+    /// 
+    ///         <default />
+    ///         <remove value="Message" />
+    ///         <arrangement value="Data:message" />
+    /// 
     /// </example>
     /// <example>
     /// You can also use the <see cref="PatternLayout.ConversionPattern"/> configurations:
-    /// <code>
-    /// &lt;conversionPattern&gt; value="DEFAULT!nxlog;UserName;HostName" /&gt; to use the default members suitable for nxlog, username and hostname.
-    /// &lt;conversionPattern&gt; value="%d ... %serialize ..." /&gt; to use the <see cref="PatternLayout"/> style.
-    /// </code>
+    /// 
+    /// * to use the default members suitable for nxlog, username and hostname:
+    /// 
+    ///         <conversionPattern value="DEFAULT!nxlog;UserName;HostName" />
+    ///         
+    /// * to use the <see cref="PatternLayout"/> style
+    /// 
+    ///         <conversionPattern value="%d ... %serialize ..." />
     /// </example>
     /// <author>Robert Sevcik</author>
     public class SerializedLayout : PatternLayout
     {
         #region Static defaults and initialization
-
+        
         /// <summary>
-        /// This will be used as a default conversion pattern.
-        /// Destination: <seealso cref="PatternLayout.ConversionPattern"/>
-        /// </summary>
-        public static string DefaultSerializePattern = "DEFAULT";
-
-        /// <summary>
-        /// This is the default serializing pattern converter name, 
-        /// which should match (+%) with the pattern. 
-        /// Destination: <seealso cref="SerializerName"/>
+        /// This is the default serializing pattern converter name.
+        /// Destination: <see cref="SerializerName"/>
         /// </summary>
         public static string DefaultSerializerName = "serialize";
 
         /// <summary>
-        /// The default type of serializing pattern converter. 
-        /// Destination: <seealso cref="SerializerType"/>
-        /// </summary>
-        public static Type DefaultSerializerType = typeof(JsonPatternConverter);
-
-        /// <summary>
-        /// Static constructor to initialize the environment - <see cref="ArrangementConverter.Init"/>.
+        /// Static constructor to initialize the environment - calls <see cref="ArrangementConverter.Init"/>.
         /// </summary>
         static SerializedLayout()
         {
@@ -137,11 +159,6 @@ namespace log4net.Layout
         #region Public Properties
 
         /// <summary>
-        /// The type of serializing conversion pattern to use.
-        /// </summary>
-        public Type SerializerType { get; set; }
-
-        /// <summary>
         /// The name to use for the serializing conversion pattern
         /// </summary>
         public String SerializerName { get; set; }
@@ -149,7 +166,7 @@ namespace log4net.Layout
         /// <summary>
         /// The serializer used to <see cref="Format"/> the <see cref="LoggingEvent"/>
         /// </summary>
-        public PatternConverter Serializer { get; set; }
+        public PatternConverter SerializingConverter { get; set; }
 
         #endregion
 
@@ -161,7 +178,7 @@ namespace log4net.Layout
         private readonly MultipleArrangement m_arrangement = new MultipleArrangement();
 
         /// <summary>
-        /// FIXME: Who know why the parrent class calls ActivateOptions() from constructor?
+        /// FIXME: Who knows why the parrent class calls ActivateOptions() from constructor?
         /// It seems unnecessary and causes issues here. We use this field to 
         /// suspend the call to ActivateOptions() from constructor
         /// </summary>
@@ -185,14 +202,13 @@ namespace log4net.Layout
         /// </para>
         /// </remarks>
         public SerializedLayout()
-            : base(DefaultSerializePattern)
+            : base(String.Empty)
         {
             // exception can be rendered so we do not ignore exceptions
             // note: when this was true (default) AppenderSkeleton.RenderLoggingEvent 
             // would add the exception, which is invalid in JSON context
             IgnoresException = false;
 
-            SerializerType = DefaultSerializerType;
             SerializerName = DefaultSerializerName;
 
             // now we can allow ActivateOptions()
@@ -256,20 +272,25 @@ namespace log4net.Layout
             if (m_arrangement.Arrangements.Count != 0)
                 arrangement.AddArrangement(m_arrangement);
 
-            var patternArrangement = ArrangementConverter.GetArrangement(ConversionPattern);
-            if (patternArrangement != null) arrangement.AddArrangement(patternArrangement);
+            var patternArrangement = ArrangementConverter.GetArrangement(ConversionPattern, converters);
+            if (patternArrangement != null) 
+                arrangement.AddArrangement(patternArrangement);
 
-            var name = SerializerName ?? DefaultSerializerName;
-            var type = SerializerType ?? DefaultSerializerType;
-            var info = (parser.PatternConverters.ContainsKey(name)
-                            ? parser.PatternConverters[name] as ConverterInfo
-                            : null
-                        ) ?? CreateSerializerInfo(name, type);
+            var serconv = SerializingConverter;
 
-            Serializer = CreateSerializer(info);
+            if (serconv == null)
+            {
+                var name = SerializerName ?? DefaultSerializerName;
+                var info = (parser.PatternConverters.ContainsKey(name)
+                                ? parser.PatternConverters[name] as ConverterInfo
+                                : null
+                            ) ?? CreateSerializingConverterInfo(name, typeof(JsonPatternConverter));
 
-            if (Serializer != null)
-                SetUpSerializer(Serializer, converters, arrangement);
+                SerializingConverter = serconv = CreateSerializingConverter(info);
+            }
+
+            if (serconv != null)
+                SetUpSerializingConverter(serconv, converters, arrangement);
         }
 
         #endregion
@@ -277,12 +298,12 @@ namespace log4net.Layout
         #region Override of PatternLayout
 
         /// <summary>
-        /// Produces a formatted string as specified by the Serializer.
+        /// Produces a formatted string as specified by the SerializingConverter.
         /// </summary>
         /// <param name="loggingEvent">the event being logged</param>
         /// <param name="writer">The TextWriter to write the formatted event to</param>
         /// <remarks>
-        /// If Serializer is not set, we default to base implementation.
+        /// If SerializingConverter is not set, we default to base implementation.
         /// </remarks>
         public override void Format(System.IO.TextWriter writer, LoggingEvent loggingEvent)
         {
@@ -295,10 +316,10 @@ namespace log4net.Layout
                 throw new ArgumentNullException("loggingEvent");
             }
 
-            if (Serializer == null)
+            if (SerializingConverter == null)
                 base.Format(writer, loggingEvent);
             else
-                Serializer.Format(writer, loggingEvent);
+                SerializingConverter.Format(writer, loggingEvent);
         }
 
         #endregion
@@ -307,7 +328,7 @@ namespace log4net.Layout
 
 
         /// <summary>
-        /// Fetch our own <see cref="PatternConverter"/> Serializer.
+        /// Fetch our own <see cref="PatternConverter"/> SerializingConverter.
         /// </summary>
         /// <param name="info">description of the PatternConverter</param>
         /// <returns>pattern converter set up</returns>
@@ -316,7 +337,7 @@ namespace log4net.Layout
         /// Please note that properties are only supported with log4net 1.2.11 and above.
         /// </para>
         /// </remarks>
-        protected virtual PatternConverter CreateSerializer(ConverterInfo info)
+        protected virtual PatternConverter CreateSerializingConverter(ConverterInfo info)
         {
             var conv = info.Type == null ? null : Activator.CreateInstance(info.Type) as PatternConverter;
             if (conv == null) conv = new JsonPatternConverter();
@@ -339,26 +360,25 @@ namespace log4net.Layout
         /// Please note that properties are only supported with log4net 1.2.11 and above.
         /// </para>
         /// </remarks>
-        protected virtual void SetUpSerializer(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement)
+        protected virtual void SetUpSerializingConverter(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement)
         {
-
             var serializedConv = conv as ISerializingPatternConverter;
 
             if (serializedConv != null)
             {
-                serializedConv.SetConverters(converters);
-
-                if (arrangement != null)
-                {
-                    arrangement.SetConverters(converters);
-                    arrangement.Arrange(serializedConv.Members);
-                }
+                serializedConv.SetUp(arrangement, converters);
             }
 #if !LOG4NET_1_2_10_COMPATIBLE
             else
             {
+                LogLog.Warn(GetType(), String.Format("Converter is not a ISerializingPatternConverter: {0}. Passing arrangement and converters as properties.", conv));
                 conv.Properties["arrangement"] = arrangement;
                 conv.Properties["converters"] = converters;
+            }
+#else
+            else
+            {
+                LogLog.Error(String.Format("Converter is not a ISerializingPatternConverter: {0}. Since converter properties are not supported before 1.2.11, no arrangements can be passed. You can still use the converter option with PatternLayout.", conv));
             }
 #endif
 
@@ -370,14 +390,14 @@ namespace log4net.Layout
         }
 
         /// <summary>
-        /// Instantiate our own Serializer info
+        /// Instantiate our own SerializingConverter info
         /// </summary>
         /// <remarks>
-        /// <see cref="SerializerName"/> and <see cref="SerializerType"/> properties
+        /// <see cref="SerializerName"/> property
         /// </remarks>
         /// <returns>the info created</returns>
         /// <exception cref="InvalidOperationException">for invalid types see <see cref="PatternConverter"/> abstract class.</exception>
-        protected virtual ConverterInfo CreateSerializerInfo(string name, Type type)
+        protected virtual ConverterInfo CreateSerializingConverterInfo(string name, Type type)
         {
             return new ConverterInfo() { Name = name, Type = type };
         }

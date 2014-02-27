@@ -28,8 +28,11 @@ namespace log4net.Layout
     /// This <see cref="IRawLayout"/> facilitates arranged members retrieval 
     /// in the form of a <see cref="Dictionary&lt;String,Object>"/>.
     /// </summary>
+    /// <remarks>
+    /// This is meant to be used as a <see cref="Pattern.JsonPatternConverter.Fetcher"/>
+    /// </remarks>
     /// <author>Robert Sevcik</author>
-    public class RawArrangedLayout : IRawLayout
+    public class RawArrangedLayout : IRawLayout, IRawArrangedLayout
     {
         /// <summary>
         /// The <see cref="IMember"/>s to be put in a dictionary

@@ -40,19 +40,31 @@ namespace log4net.Layout
         /// <summary>
         /// A list of standard conversions to be used by <see cref="Members.Member"/>
         /// </summary>
-        public static IEnumerable<RawCallLayout> StandardCalls { get; set; }
+        public static IEnumerable<RawCallLayout> OverrideCalls { get; set; }
 
         /// <summary>
         /// cache the proc id;
         /// </summary>
         static int s_processId = System.Diagnostics.Process.GetCurrentProcess().Id;
 
+#if CLIENT_PROFILE
         /// <summary>
-        /// Initialize <see cref="StandardCalls"/>
+        /// Cache the website name
+        /// </summary>
+        static string s_websitename = null;
+#else
+        /// <summary>
+        /// Cache the website name
+        /// </summary>
+        static string s_websitename = System.Web.Hosting.HostingEnvironment.SiteName;
+#endif
+
+        /// <summary>
+        /// Initialize <see cref="OverrideCalls"/>
         /// </summary>
         static RawCallLayout()
         {
-            StandardCalls = MakeStandardCalls(StandardCalls);
+            OverrideCalls = MakeOverrideCalls(OverrideCalls);
         }
 
         #region FindLayout and friends, static utility methods to take away
@@ -93,7 +105,7 @@ namespace log4net.Layout
         /// <returns>enhanced standard calls</returns>
         public static IEnumerable<RawCallLayout> GetCalls(ConverterInfo[] converters)
         {
-            return RawCallLayout.CombineCalls(StandardCalls, converters);
+            return RawCallLayout.CombineCalls(OverrideCalls, converters);
         }
 
         /// <summary>
@@ -103,7 +115,7 @@ namespace log4net.Layout
         /// <param name="converters">converters to include</param>
         public static IEnumerable<RawCallLayout> CombineCalls(IEnumerable<RawCallLayout> calls, ConverterInfo[] converters)
         {
-            return Enumerable.Union(EnumerateConverters(converters), calls);
+            return Enumerable.Union(calls, EnumerateConverters(converters));
         }
 
         private static IEnumerable<RawCallLayout> EnumerateConverters(ConverterInfo[] converters)
@@ -127,8 +139,10 @@ namespace log4net.Layout
         /// </remarks>
         /// <param name="calls">calls to add to</param>
         /// <returns>calls added</returns>
-        public static IEnumerable<RawCallLayout> MakeStandardCalls(IEnumerable<RawCallLayout> calls)
+        public static IEnumerable<RawCallLayout> MakeOverrideCalls(IEnumerable<RawCallLayout> calls)
         {
+            // these calls should grab the same info as log4net would, but try to get it in raw format so that 
+            // value is serialized later by a specific serializer.
             RawCallLayout.AddCalls(ref calls, e => e.TimeStamp.ToUniversalTime().ToString("o"), "utcdate", "utcDate", "UtcDate");
             RawCallLayout.AddCalls(ref calls, e => e.TimeStamp.ToString("o"), "date", "d");
             RawCallLayout.AddCalls(ref calls, e => e.Level.DisplayName, "level", "p");
@@ -143,6 +157,18 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => e.Properties, "property", "properties", "mdc", "P", "X");
             RawCallLayout.AddCalls(ref calls, e => e.LookupProperty("NDC"), "ndc", "x");
             RawCallLayout.AddCalls(ref calls, e => e.Domain, "appdomain", "a", "sourcename"/*custom*/);
+
+            if (s_websitename == null)
+            {
+                RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine, "sitepath" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => e.Domain, "sitename" /*custom*/);
+            }
+            else
+            {
+                RawCallLayout.AddCalls(ref calls, e => e.Domain, "sitepath" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => s_websitename, "sitename" /*custom*/);
+            }
+
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.ClassName, "type", "class", "C");
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.FileName, "file", "F");
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.FullInfo, "location", "l");
@@ -158,6 +184,9 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => Environment.MachineName, "hostname"/*custom*/, "h"/*custom*/);
             RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine, "commandline"/*custom*/);
             RawCallLayout.AddCalls(ref calls, e => Environment.UserName, "user"/*custom*/);
+            RawCallLayout.AddCalls(ref calls, e => Environment.UserDomainName, "domain"/*custom*/);
+            RawCallLayout.AddCalls(ref calls, e => Environment.WorkingSet, "memory"/*custom*/);
+
             RawCallLayout.AddCalls(ref calls, e => Environment.WorkingSet, "memory"/*custom*/);
 
             return calls;
