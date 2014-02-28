@@ -290,6 +290,9 @@ namespace log4net.Util
             public DateTime Schedule;
         }
 
+        /// <summary>
+        /// Alive call action delegate
+        /// </summary>
         public delegate void AliveCall();
     }
 }
