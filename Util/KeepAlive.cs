@@ -47,8 +47,8 @@ namespace log4net.Util
     /// <para>
     /// </para>
     /// It's made to be thread safe. 
-    /// The code locks 'this' to synchronize, wait and pulse.
-    /// Additionally the code locks the <see cref="m_calls"/> for any operation with appenders.
+    /// The code locks <see cref="m_control_locker"/> to synchronize, wait and pulse.
+    /// Additionally the code locks the <see cref="m_calls_locker"/> for any operation with appenders.
     /// </remarks>
     /// <author>Robert Sevcik</author>
     public sealed class KeepAlive : IDisposable
@@ -65,16 +65,19 @@ namespace log4net.Util
         /// <param name="interval">how often</param>
         public void Manage(AliveCall alivecall, int interval)
         {
-            lock (this)
+            lock (m_control_locker)
             {
-                lock (m_calls)
+                lock (m_calls_locker)
                 {
-                    m_calls[alivecall] = MakeConfig(interval);
-
-                    if (!m_run) Start();
+                    m_calls[alivecall] = MakeConfig(alivecall, interval);
                 }
 
-                Monitor.PulseAll(this);
+                // ensure we have the right repo if config changed
+                m_rep = LogManager.GetRepository(typeof(KeepAlive).Assembly);
+
+                if (!m_stop) Start();
+
+                Monitor.PulseAll(m_control_locker);
             }
         }
 
@@ -84,18 +87,27 @@ namespace log4net.Util
         /// <param name="alivecall">callback to be released</param>
         public void Release(AliveCall alivecall)
         {
-            lock (this)
+            lock (m_control_locker)
             {
-                lock (m_calls)
+                lock (m_calls_locker)
                 {
                     m_calls.Remove(alivecall);
-
-                    if (m_calls.Count == 0) Stop();
                 }
 
-                Monitor.PulseAll(this);
+                Monitor.PulseAll(m_control_locker);
             }
         }
+
+        /// <summary>
+        /// Used to lock operations on this (Start, Stop, Manage, Release)
+        /// </summary>
+        readonly object m_control_locker = new object();
+
+        /// <summary>
+        /// Used to lock operations on <see cref="m_calls"/>
+        /// </summary>
+        readonly object m_calls_locker = new object();
+
 
         /// <summary>
         /// Internal appender and config store
@@ -113,136 +125,159 @@ namespace log4net.Util
         Thread m_thread;
 
         /// <summary>
-        /// flag indication that <see cref="Run"/> should continue.
+        /// flag indication that <see cref="Run"/> should terminate.
         /// </summary>
-        bool m_run;
-
-        /// <summary>
-        /// Exit the <see cref="Run"/> loop
-        /// </summary>
-        private void Stop()
-        {
-            lock (this)
-            {
-                m_run = false;
-                Monitor.PulseAll(this);
-
-                if (m_thread == null) return;
-                if (m_thread.ThreadState == ThreadState.Unstarted) return;
-
-                if (!m_thread.Join(100))
-                {
-                    m_thread.Interrupt();
-
-                    if (!m_thread.Join(500))
-                        m_thread.Abort();
-                }
-            }
-        }
+        bool m_stop;
 
         /// <summary>
         /// Initiate the <see cref="Run"/> loop
         /// </summary>
         private void Start()
         {
-            lock (this)
+            lock (m_control_locker)
             {
-                Stop();
-
-                m_rep = LogManager.GetRepository(typeof(KeepAlive).Assembly);
-
-                m_thread = new Thread(Run);
-                m_thread.Name = typeof(KeepAlive).FullName;
-                m_thread.Priority = ThreadPriority.Lowest;
-                m_thread.IsBackground = true;
-                m_thread.Start();
-
-                Monitor.PulseAll(this);
+                if (m_thread == null || !m_thread.IsAlive)
+                {
+                    m_thread = new Thread(Run);
+                    m_thread.Name = String.Format("{0}-{1}", typeof(KeepAlive).Name, m_thread.ManagedThreadId);
+                    m_thread.Priority = ThreadPriority.Lowest;
+                    m_thread.IsBackground = true;
+                    m_thread.Start();
+                }
             }
         }
 
         /// <summary>
-        /// Loop as long as <see cref="m_run"/>
+        /// This is fatal.
+        /// </summary>
+        public void Stop()
+        {
+            lock (m_control_locker)
+            {
+                m_stop = true;
+
+                Monitor.PulseAll(m_control_locker);
+            }
+
+            if (m_thread != null && m_thread.IsAlive)
+            {
+                m_thread.Priority = ThreadPriority.AboveNormal;
+
+                if (!m_thread.Join(1000))
+                    m_thread.Abort();
+            }
+        }
+
+        /// <summary>
+        /// Loop as long as not <see cref="m_stop"/>
         /// </summary>
         private void Run()
         {
-            m_run = true;
+            var maxSnooze = TimeSpan.FromMilliseconds(500);
 
-            var refdt = DateTime.ParseExact("1970", "yyyy", CultureInfo.InvariantCulture);
-
-            var exception_logged = false;
-
-            while (m_run)
+            try
             {
-                bool locked = false;
-
-                try
+                lock (m_control_locker)
                 {
-                    while (m_run && !(locked = Monitor.TryEnter(this, 1))) Thread.Sleep(1);
-
-                    if (!m_run) break;
-
-                    var now = DateTime.UtcNow;
-
-                    var waketime = now.AddMinutes(1);
-
-                    lock (m_calls)
+                    while (!m_stop)
                     {
-                        foreach (var kvp in m_calls)
+                        while (!m_stop && m_calls.Count == 0)
                         {
-                            var call = kvp.Key;
-                            var config = kvp.Value;
-
-                            if (now >= config.Schedule)
-                            {
-                                call();
-                            }
-
-                            var wake_ms = (now - refdt).TotalMilliseconds + config.Interval + 10;
-                            wake_ms -= wake_ms % config.Interval;
-                            wake_ms = Math.Round(wake_ms) + config.Offset;
-
-                            config.Schedule = refdt.AddMilliseconds(wake_ms);
-
-                            if (waketime > config.Schedule) waketime = config.Schedule;
+                            // suspend activity if there's nothing to do
+                            Monitor.Wait(m_control_locker, maxSnooze);
+                            Monitor.PulseAll(m_control_locker);
                         }
-                    }
 
-                    var snooze = TimeSpan.Zero;
-                    while (0 < (snooze = waketime - DateTime.UtcNow).Ticks)
-                    {
-                        if (Monitor.Wait(this, snooze)) break;
+                        if (m_stop) break;
+
+                        var snooze = ExecuteSchedule(maxSnooze);
+
+                        Monitor.Wait(m_control_locker, snooze);
+                        Monitor.PulseAll(m_control_locker);
                     }
                 }
-                catch (ThreadAbortException tax)
-                {
-                    m_run = false;
+            }
+            catch (ThreadAbortException tax)
+            {
+#if LOG4NET_1_2_10_COMPATIBLE
+                LogLog.Error("Alive.Run() aborted.", tax);
+#else
+                LogLog.Error(GetType(), "Alive.Run() aborted.", tax);
+#endif
+            }
+            catch (Exception x)
+            {
+                m_stop = true;
 
 #if LOG4NET_1_2_10_COMPATIBLE
-                    LogLog.Error("Alive.Run() aborting.", tax);
+                LogLog.Error("Alive.Run() failed.", x);
 #else
-                    LogLog.Error(GetType(), "Alive.Run() aborted.", tax);
+                LogLog.Error(GetType(), "Alive.Run() failed.", x);
 #endif
-                }
-                catch (Exception x)
-                {
-                    if (!exception_logged)
-                    {
-                        exception_logged = true;
-
+            }
+            finally
+            {
 #if LOG4NET_1_2_10_COMPATIBLE
-                        LogLog.Error("Exception in Alive.Run(). Further exceptions will not be logged.", x);
+                LogLog.Warn("Alive.Run() finished.");
 #else
-                        LogLog.Error(GetType(), "Exception in Alive.Run(). Further exceptions will not be logged.", x);
+                LogLog.Warn(GetType(), "Alive.Run() finished.");
 #endif
+            }
+        }
+
+        private TimeSpan ExecuteSchedule(TimeSpan maxSnooze)
+        {
+            var now = DateTime.UtcNow;
+            var waketime = now + maxSnooze;
+            var scheduledConfigs = new List<Config>();
+
+            lock (m_calls_locker)
+            {
+                foreach (var config in m_calls.Values)
+                {
+                    if (now.AddMilliseconds(10) >= config.Schedule)
+                    {
+                        scheduledConfigs.Add(config);
+
+                        // round to a multiple of interval with an offset
+                        var wake_ms = (now - s_refdt).TotalMilliseconds + config.Interval + 10;
+                        wake_ms -= wake_ms % config.Interval;
+                        wake_ms = Math.Round(wake_ms) + config.Offset;
+
+                        // set new schedule
+                        config.Schedule = s_refdt.AddMilliseconds(wake_ms);
                     }
 
-                    // in case this is a fast failure, eliminate CPU grab
-                    Thread.Sleep(10);
+                    if (waketime > config.Schedule) waketime = config.Schedule;
                 }
-                finally
+            }
+
+            // execute scheduled actions
+            foreach (var config in scheduledConfigs) MakeCall(config);
+
+            var snooze = waketime - DateTime.UtcNow;
+            if (snooze < TimeSpan.Zero) return TimeSpan.Zero;
+            if (snooze > maxSnooze) return maxSnooze;
+            return snooze;
+        }
+
+        private void MakeCall(Config config)
+        {
+            try
+            {
+                config.Call();
+            }
+            catch (Exception x)
+            {
+                if (!config.ExceptionLogged)
                 {
-                    if (locked) Monitor.Exit(this);
+                    config.ExceptionLogged = true;
+
+#if LOG4NET_1_2_10_COMPATIBLE
+                    LogLog.Error("Exception in Alive.MakeCall(). Further exceptions will not be logged for this call.", x);
+#else
+                    LogLog.Error(GetType(), "Exception in Alive.MakeCall(). Further exceptions will not be logged for this call.", x);
+#endif
                 }
             }
         }
@@ -252,9 +287,14 @@ namespace log4net.Util
             Stop();
         }
 
-        Config MakeConfig(int interval)
+        Config MakeConfig(AliveCall alivecall, int interval)
         {
-            var config = new Config() { Interval = interval, Schedule = DateTime.Today };
+            var config = new Config()
+            {
+                Interval = interval,
+                Schedule = DateTime.Today,
+                Call = alivecall
+            };
 
             if (config.Interval <= 0)
                 config.Interval = 60000;
@@ -268,7 +308,7 @@ namespace log4net.Util
         /// <summary>
         /// Per-appender config structure
         /// </summary>
-        private struct Config
+        private class Config
         {
             /// <summary>
             /// Interval to keep alive with
@@ -288,11 +328,23 @@ namespace log4net.Util
             /// Next run schedule
             /// </summary>
             public DateTime Schedule;
+
+            /// <summary>
+            /// This call has been problematic. This helps reduce verbosity in case of permanent failure.
+            /// </summary>
+            public bool ExceptionLogged;
+
+            /// <summary>
+            /// The AliveCall delegate to be called
+            /// </summary>
+            public AliveCall Call;
         }
 
         /// <summary>
         /// Alive call action delegate
         /// </summary>
         public delegate void AliveCall();
+
+        private static readonly DateTime s_refdt = DateTime.ParseExact("1970", "yyyy", CultureInfo.InvariantCulture);
     }
 }

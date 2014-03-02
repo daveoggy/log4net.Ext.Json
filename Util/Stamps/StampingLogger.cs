@@ -85,7 +85,7 @@ namespace log4net.Util.Stamps
         public override bool Additivity
         {
             get { return InnerLogger.Additivity; }
-            set { base.Additivity = InnerLogger.Additivity = value; }
+            set { InnerLogger.Additivity = value; }
         }
         /// <summary>
         /// Wrap of <see cref="InnerLogger"/>
@@ -129,8 +129,8 @@ namespace log4net.Util.Stamps
         /// </summary>
         public override Logger Parent
         {
-            get { return base.Parent; }
-            set { base.Parent = value; InnerLogger.Parent = this; }
+            get { return InnerLogger.Parent; }
+            set { base.Parent = InnerLogger; InnerLogger.Parent = value; }
         }
 
         #endregion
