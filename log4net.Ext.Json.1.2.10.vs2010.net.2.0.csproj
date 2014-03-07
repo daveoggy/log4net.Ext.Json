@@ -86,6 +86,7 @@
     <Compile Include="Util\Stamps\PropertyTimeStamp.cs" />
     <Compile Include="Util\Stamps\PropertyStamp.cs" />
     <Compile Include="Util\Stamps\PropertyValueStamp.cs" />
+    <Compile Include="Util\Stamps\Stamp.cs" />
     <Compile Include="Util\Stamps\StampDelegate.cs" />
     <Compile Include="Util\Stamps\StampingLogger.cs" />
     <Compile Include="Util\Stamps\StampingLoggerFactory.cs" />

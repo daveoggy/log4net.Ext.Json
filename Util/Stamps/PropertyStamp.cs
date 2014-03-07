@@ -22,46 +22,5 @@ using log4net.Core;
 
 namespace log4net.Util.Stamps
 {
-    /// <summary>
-    /// Set a named property value on the event. Actual value must be provided by inheriting class.
-    /// </summary>
-    /// <author>Robert Sevcik</author>
-    public abstract class PropertyStamp : IStamp
-    {
-        /// <summary>
-        /// Property name to set
-        /// </summary>
-        public virtual String Name { get; set; }
-        
-        /// <summary>
-        /// Verify all the requirements and set a named property value - stamp the event.
-        /// </summary>
-        /// <param name="loggingEvent">event to stamp</param>
-        /// <remarks>
-        /// Only primitive values are taken, otherwise stringified. This avoids late reference change problem.
-        /// </remarks>
-        public void StampEvent(Core.LoggingEvent loggingEvent)
-        {
-            var value = GetValue(loggingEvent);
-
-            if(value == null) return;
-
-            if(value is IFixingRequired)
-                value = ((IFixingRequired)value).GetFixedObject();
-
-            if(value == null) return;
-
-            if(!(value is string || value.GetType().IsPrimitive))
-                value = loggingEvent.Repository.RendererMap.FindAndRender(value);
-
-            loggingEvent.Properties[Name] = value;
-        }
-
-        /// <summary>
-        /// Provide <see cref="PropertyStamp"/> with a property value
-        /// </summary>
-        /// <param name="loggingEvent">event to stamp</param>
-        /// <returns>property value to set</returns>
-        protected abstract Object GetValue(Core.LoggingEvent loggingEvent);
-    }
+    // delete
 }

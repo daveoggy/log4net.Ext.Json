@@ -23,21 +23,16 @@ namespace log4net.Util.Stamps
     /// Set a process id number property value on the event.
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class PropertyProcessIdStamp : PropertyStamp
+    public class PropertyProcessIdStamp : Stamp
     {
         /// <summary>
-        /// cache the proc id;
-        /// </summary>
-        static int s_processId = System.Diagnostics.Process.GetCurrentProcess().Id;
-        
-        /// <summary>
-        /// Provide <see cref="PropertyStamp"/> with a process id number value
+        /// Create stamp value - process id
         /// </summary>
         /// <param name="loggingEvent">event to stamp</param>
-        /// <returns>property value to set</returns>
+        /// <returns>value to set as a stamp</returns>
         protected override object GetValue(Core.LoggingEvent loggingEvent)
         {
-            return s_processId;
+            return GetProcessId();
         }
     }
 }

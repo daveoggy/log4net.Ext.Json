@@ -48,12 +48,13 @@ namespace log4net.Util.Stamps
         /// </summary>
         public static IStamp[] DefaultStamps
                             = new IStamp[]{
-                                new PropertyValueStamp(){Name="stamp.hostname", Value = Environment.MachineName},
-                                new PropertyProcessIdStamp(){Name="stamp.processid"},
-                                new PropertySequenceStamp(){Name="stamp.sequence"},
-                                new PropertyTimeStamp(){Name="stamp.nowmicrotime", Multiplier = 1000000, Round=true},
-                                new PropertyTimeStamp(){Name="stamp.appmicrotime", Multiplier = 1000000, Round=true, Reference = AgeReference.ApplicationStart},
-                                new PropertyTimeStamp(){Name="stamp.sysmicrotime", Multiplier = 1000000, Round=true, Reference = AgeReference.SystemStart},
+                                //new PropertyValueStamp(){Name="stamp.hostname", Value = Environment.MachineName},
+                                //new PropertyProcessIdStamp(){Name="stamp.processid"},
+                                //new PropertySequenceStamp(){Name="stamp.sequence"},
+                                //new PropertyTimeStamp(){Name="stamp.nowmicrotime", Multiplier = 1000000, Round=true},
+                                //new PropertyTimeStamp(){Name="stamp.appmicrotime", Multiplier = 1000000, Round=true, TimeTo = AgeReference.ApplicationStart},
+                                //new PropertyTimeStamp(){Name="stamp.sysmicrotime", Multiplier = 1000000, Round=true, TimeTo = AgeReference.SystemStart},
+                                new Stamp()
                             };
 
         /// <summary>

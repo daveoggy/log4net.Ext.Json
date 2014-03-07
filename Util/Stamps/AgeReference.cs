@@ -26,24 +26,20 @@ namespace log4net.Util.Stamps
     public enum AgeReference
     {
         /// <summary>
-        /// Unix epoch 1970-01-01 is the reference time, measure now
+        /// Now is the time
         /// </summary>
-        SinceUnixEpoch = 0, 
+        Now = 0,
         /// <summary>
-        /// System startup time is the reference time, measure now
+        /// Unix epoch 1970-01-01 is the time
         /// </summary>
-        SystemUpTime = 1, 
+        Epoch1970 = 1, 
         /// <summary>
-        /// Application startup time is the reference time, measure now
+        /// System startup time is the time
         /// </summary>
-        ApplicationUpTime = 2,
+        SystemStart = 2, 
         /// <summary>
-        /// System startup time should be given against epoch
+        /// Application startup time is the time
         /// </summary>
-        SystemStart = 3,
-        /// <summary>
-        /// Application startup time should be given against epoch
-        /// </summary>
-        ApplicationStart = 4
+        ApplicationStart = 3,
     }
 }

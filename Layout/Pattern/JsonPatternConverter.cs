@@ -65,7 +65,9 @@ namespace log4net.Layout.Pattern
         /// </summary>
         public JsonPatternConverter()
         {
+#if !LOG4NET_1_2_10_COMPATIBLE     
             this.Properties = new PropertiesDictionary();
+#endif
             this.Fetcher = CreateFetcher(); 
             this.Renderer = JsonObjectRenderer.Default;
 

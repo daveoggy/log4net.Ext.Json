@@ -25,7 +25,7 @@ namespace log4net.Util.Stamps
     /// Set a fixed value property on the event, for example a host name.
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class PropertyValueStamp : PropertyStamp
+    public class PropertyValueStamp : Stamp
     {
         /// <summary>
         /// Property value to set
@@ -33,10 +33,10 @@ namespace log4net.Util.Stamps
         public Object Value { get; set; }
 
         /// <summary>
-        /// Provide <see cref="PropertyStamp"/> with a property value
+        /// Create stamp value - the <see cref="Value"/>
         /// </summary>
         /// <param name="loggingEvent">event to stamp</param>
-        /// <returns>property value to set</returns>
+        /// <returns>value to set as a stamp</returns>
         protected override object GetValue(Core.LoggingEvent loggingEvent)
         {
             return Value;

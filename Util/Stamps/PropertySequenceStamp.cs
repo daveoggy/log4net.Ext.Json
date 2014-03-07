@@ -25,21 +25,16 @@ namespace log4net.Util.Stamps
     /// Set a thread safe sequencial number property value on the event.
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class PropertySequenceStamp : PropertyStamp
+    public class PropertySequenceStamp : Stamp
     {
         /// <summary>
-        /// cache the sequence id;
-        /// </summary>
-        static long s_sequenceId = 0;
-
-        /// <summary>
-        /// Provide <see cref="PropertyStamp"/> with a sequential number value
+        /// Create stamp value - thread-safe statically incremented sequence number
         /// </summary>
         /// <param name="loggingEvent">event to stamp</param>
-        /// <returns>property value to set</returns>
+        /// <returns>value to set as a stamp</returns>
         protected override object GetValue(Core.LoggingEvent loggingEvent)
         {
-            return Interlocked.Increment(ref s_sequenceId);
+            return GetSequence();
         }
     }
 }
