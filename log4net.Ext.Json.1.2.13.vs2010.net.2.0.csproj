@@ -80,11 +80,10 @@
     <Compile Include="Appender\KeepAliveAppender.cs" />
     <Compile Include="Util\KeepAlive.cs" />
     <Compile Include="Util\Stamps\AgeReference.cs" />
-    <Compile Include="Util\Stamps\PropertyProcessIdStamp.cs" />
-    <Compile Include="Util\Stamps\PropertySequenceStamp.cs" />
-    <Compile Include="Util\Stamps\PropertyTimeStamp.cs" />
-    <Compile Include="Util\Stamps\PropertyStamp.cs" />
-    <Compile Include="Util\Stamps\PropertyValueStamp.cs" />
+    <Compile Include="Util\Stamps\ProcessIdStamp.cs" />
+    <Compile Include="Util\Stamps\SequenceStamp.cs" />
+    <Compile Include="Util\Stamps\TimeStamp.cs" />
+    <Compile Include="Util\Stamps\ValueStamp.cs" />
     <Compile Include="Util\Stamps\Stamp.cs" />
     <Compile Include="Util\Stamps\StampDelegate.cs" />
     <Compile Include="Util\Stamps\StampingLogger.cs" />
