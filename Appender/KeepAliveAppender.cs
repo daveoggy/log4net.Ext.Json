@@ -47,6 +47,13 @@ namespace log4net.Appender
         private static ILog log = LogManager.GetLogger(typeof(KeepAliveAppender));
 
         /// <summary>
+        /// It's the default level used to log 'alive' events, based on log4net's Alert level. 
+        /// It's high so that it bounces through INFO/ERROR filters, even though it is not a reason to be alert.
+        /// Lack of 'alive' might be a reason to be alert though.
+        /// </summary>
+        public static Level Alive = new Level(Level.Alert.Value, "ALIVE");
+
+        /// <summary>
         /// Log alive message at this level
         /// </summary>
         public Level KeepAliveLevel { get; set; }
@@ -80,7 +87,6 @@ namespace log4net.Appender
         public override void ActivateOptions()
         {
             base.ActivateOptions();
-
             KeepAlive.Instance.Manage(AliveCall, KeepAliveInterval);
         }
 
@@ -89,7 +95,7 @@ namespace log4net.Appender
         /// </summary>
         protected void AliveCall()
         {
-            log.Logger.Log(log.GetType(), KeepAliveLevel ?? Level.Notice, KeepAliveMessage ?? "Alive", null);
+            log.Logger.Log(log.GetType(), KeepAliveLevel ?? Alive, KeepAliveMessage ?? Alive.DisplayName, null);
         }
 
         /// <summary>

@@ -150,7 +150,7 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => e.ThreadName, "thread", "t");
             RawCallLayout.AddCalls(ref calls, e => e.RenderedMessage, "message", "raw_event"/*custom*/, "m");
             RawCallLayout.AddCalls(ref calls, e => e.MessageObject, "messageobject"/*custom*/, "mo"/*custom*/);
-            RawCallLayout.AddCalls(ref calls, e => e.GetExceptionString(), "exception", "e"/*custom*/);
+            RawCallLayout.AddCalls(ref calls, e => e.ExceptionObject == null ? null : e.GetExceptionString(), "exception", "e"/*custom*/);
             RawCallLayout.AddCalls(ref calls, e => e.ExceptionObject, "exceptionobject"/*custom*/, "eo"/*custom*/);
             RawCallLayout.AddCalls(ref calls, e => e.Identity, "identity", "u");
             RawCallLayout.AddCalls(ref calls, e => e.UserName, "username", "w");

@@ -80,7 +80,7 @@ namespace log4net.Util.Stamps
             var pid = GetProcessId();
 
             return String.Format(
-                "{0}/{1}+{2}+{3}/{4}:{5}"
+                "{0};{1};{2};{3};{4};{5}"
                 ,Environment.MachineName
                 ,tSys
                 ,tApp
@@ -281,8 +281,8 @@ namespace log4net.Util.Stamps
         /// <returns>adjusted time value</returns>
         public static object GetTimeStampValue(AgeReference tfrom, AgeReference tto, double multiplier, bool round)
         {
-            var timeTo = GetEpochMicroTime(tfrom);
-            var timeFrom = GetEpochMicroTime(tto);
+            var timeTo = GetEpochMicroTime(tto);
+            var timeFrom = GetEpochMicroTime(tfrom);
             var value = AdjustTimeValue(timeTo - timeFrom, multiplier, round);
             return value;
         }

@@ -81,11 +81,15 @@ namespace log4net.Layout
                             : String.Format("{0}.{1}", path, entry.Key)
                             ;
 
-                if (entry.Value is IDictionary)
+                if (entry.Value == null)
+                { 
+                    // ignore nulls
+                }
+                else if (entry.Value is IDictionary)
                 {
                     FlattenDictionary(flatdict, (IDictionary)entry.Value, name);
                 }
-                else if (entry.Value == null || entry.Value is string || entry.Value.GetType().IsPrimitive)
+                else if (entry.Value is string || entry.Value.GetType().IsPrimitive)
                 {
                     flatdict[name] = entry.Value;
                 }

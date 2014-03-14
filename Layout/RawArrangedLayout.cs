@@ -56,7 +56,7 @@ namespace log4net.Layout
         {
             // the dictionary to be serialized in JSON or other
 
-            if (Members.Count == 0) 
+            if (Members.Count == 0)
                 return loggingEvent.RenderedMessage;
 
             if (Members.Count == 1 && Members[0].Name == String.Empty)
@@ -66,7 +66,11 @@ namespace log4net.Layout
 
             foreach (var member in Members)
             {
-                dic[member.Name] = member.Layout.Format(loggingEvent);
+                var value = member.Layout.Format(loggingEvent);
+
+                // ignore nulls
+                if (value != null)
+                    dic[member.Name] = value;
             }
 
             return dic;
