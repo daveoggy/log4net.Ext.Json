@@ -17,10 +17,22 @@
 //
 #endregion
 
-using System;
-using log4net.Core;
-
 namespace log4net.Util.Stamps
 {
-    // delete
+    /// <summary>
+    /// Set a process id number property value on the event.
+    /// </summary>
+    /// <author>Robert Sevcik</author>
+    public class ProcessIdStamp : Stamp
+    {
+        /// <summary>
+        /// Create stamp value - process id
+        /// </summary>
+        /// <param name="loggingEvent">event to stamp</param>
+        /// <returns>value to set as a stamp</returns>
+        protected override object GetValue(Core.LoggingEvent loggingEvent)
+        {
+            return GetProcessId();
+        }
+    }
 }

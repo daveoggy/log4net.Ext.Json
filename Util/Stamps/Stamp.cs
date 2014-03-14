@@ -35,7 +35,7 @@ namespace log4net.Util.Stamps
         /// Property name to set
         /// </summary>
         public virtual String Name { get; set; }
-        
+
         /// <summary>
         /// A universal stamp with name "stamp"
         /// </summary>
@@ -81,12 +81,12 @@ namespace log4net.Util.Stamps
 
             return String.Format(
                 "{0};{1};{2};{3};{4};{5}"
-                ,Environment.MachineName
-                ,tSys
-                ,tApp
-                ,tNow
-                ,pid
-                ,seq
+                , Environment.MachineName
+                , tSys
+                , tApp
+                , tNow
+                , pid
+                , seq
                 );
         }
 
@@ -110,7 +110,7 @@ namespace log4net.Util.Stamps
 
             return value;
         }
-                
+
         #region Statics
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace log4net.Util.Stamps
 #if LOG4NET_1_2_10_COMPATIBLE
                         LogLog.Warn("PropertyTimeStamp.Init() - getting exact app start time failed, but we should be fine with approximate time.", x);
 #else
-                        LogLog.Warn(typeof(PropertyTimeStamp), "PropertyTimeStamp.Init() - getting exact app start time failed, but we should be fine with approximate time.", x);
+                        LogLog.Warn(typeof(TimeStamp), "PropertyTimeStamp.Init() - getting exact app start time failed, but we should be fine with approximate time.", x);
 #endif
                     }
 
@@ -194,7 +194,7 @@ namespace log4net.Util.Stamps
 #if LOG4NET_1_2_10_COMPATIBLE
                         LogLog.Warn("PropertyTimeStamp.Init() - getting process id failed, leaving -1.", x);
 #else
-                        LogLog.Warn(typeof(PropertyTimeStamp), "PropertyTimeStamp.Init() - getting process id failed, leaving -1.", x);
+                        LogLog.Warn(typeof(TimeStamp), "PropertyTimeStamp.Init() - getting process id failed, leaving -1.", x);
 #endif
                         s_processId = -1;
                     }
@@ -209,7 +209,7 @@ namespace log4net.Util.Stamps
         {
             return s_processId;
         }
-        
+
         /// <summary>
         /// Get a statically incremented number in a thread safe manner
         /// </summary>
@@ -217,6 +217,15 @@ namespace log4net.Util.Stamps
         public static long GetSequence()
         {
             return Interlocked.Increment(ref s_sequenceId);
+        }
+
+        /// <summary>
+        /// Get a statically incremented number in a thread safe manner
+        /// </summary>
+        /// <returns>sequence number</returns>
+        public static long SetSequence(long value)
+        {
+            return Interlocked.Exchange(ref s_sequenceId, value);
         }
 
         /// <summary>
@@ -281,8 +290,8 @@ namespace log4net.Util.Stamps
         /// <returns>adjusted time value</returns>
         public static object GetTimeStampValue(AgeReference tfrom, AgeReference tto, double multiplier, bool round)
         {
-            var timeTo = GetEpochMicroTime(tto);
             var timeFrom = GetEpochMicroTime(tfrom);
+            var timeTo = GetEpochMicroTime(tto);
             var value = AdjustTimeValue(timeTo - timeFrom, multiplier, round);
             return value;
         }
@@ -294,7 +303,7 @@ namespace log4net.Util.Stamps
         /// <param name="multiplier"> / 1,000,000 to get seconds</param>
         /// <param name="round">Round to a whole number</param>
         /// <returns>adjusted value</returns>
-        public static object AdjustTimeValue(double value, double multiplier, bool round)
+        public static double AdjustTimeValue(double value, double multiplier, bool round)
         {
             if (multiplier != 0 && multiplier != 1)
             {
@@ -306,15 +315,7 @@ namespace log4net.Util.Stamps
                 value = Math.Round(value);
             }
 
-            if (value <= long.MaxValue && value >= long.MinValue && (value % 1) == 0)
-            {
-                // if the value can be represented by long, make it long
-                return (long)value;
-            }
-            else
-            {
-                return value;
-            }
+            return value;
         }
         #endregion Statics
 

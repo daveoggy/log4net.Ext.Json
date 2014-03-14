@@ -32,7 +32,7 @@ namespace log4net.Util.Stamps
     /// If the resulting value can be represented by a long type, long is returned, otherwise double.
     /// </remarks>
     /// <author>Robert Sevcik</author>
-    public class PropertyTimeStamp : Stamp
+    public class TimeStamp : Stamp
     {
         /// <summary>
         /// Round the double value to whole units
@@ -57,7 +57,7 @@ namespace log4net.Util.Stamps
         /// <summary>
         /// Create instance by default stamping with Now - Epoch1970
         /// </summary>
-        public PropertyTimeStamp()
+        public TimeStamp()
         {
             TimeFrom = AgeReference.Epoch1970;
             TimeTo = AgeReference.Now;

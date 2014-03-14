@@ -17,29 +17,24 @@
 //
 #endregion
 
-using System;
+using System.Threading;
 
 namespace log4net.Util.Stamps
 {
     /// <summary>
-    /// Set a fixed value property on the event, for example a host name.
+    /// Set a thread safe sequencial number property value on the event.
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class PropertyValueStamp : Stamp
+    public class SequenceStamp : Stamp
     {
         /// <summary>
-        /// Property value to set
-        /// </summary>
-        public Object Value { get; set; }
-
-        /// <summary>
-        /// Create stamp value - the <see cref="Value"/>
+        /// Create stamp value - thread-safe statically incremented sequence number
         /// </summary>
         /// <param name="loggingEvent">event to stamp</param>
         /// <returns>value to set as a stamp</returns>
         protected override object GetValue(Core.LoggingEvent loggingEvent)
         {
-            return Value;
+            return GetSequence();
         }
     }
 }

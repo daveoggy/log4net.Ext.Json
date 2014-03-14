@@ -20,26 +20,26 @@
 namespace log4net.Util.Stamps
 {
     /// <summary>
-    /// Defines a point of reference for <see cref="PropertyTimeStamp"/>
+    /// Defines a point of reference for <see cref="TimeStamp"/>
     /// </summary>
     /// <author>Robert Sevcik</author>
     public enum AgeReference
     {
         /// <summary>
-        /// Now is the time
-        /// </summary>
-        Now = 0,
-        /// <summary>
         /// Unix epoch 1970-01-01 is the time
         /// </summary>
-        Epoch1970 = 1, 
+        Epoch1970 = 0,
         /// <summary>
         /// System startup time is the time
         /// </summary>
-        SystemStart = 2, 
+        SystemStart = 1,
         /// <summary>
         /// Application startup time is the time
         /// </summary>
-        ApplicationStart = 3,
+        ApplicationStart = 2,
+        /// <summary>
+        /// Now is the time
+        /// </summary>
+        Now = 3,
     }
 }
