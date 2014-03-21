@@ -35,7 +35,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
-    <OutputPath>..\..\..\build\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\$(MSBuildProjectName)-$(Configuration)-$([System.DateTime]::Now.ToString(`yyyyMMdd`))\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
