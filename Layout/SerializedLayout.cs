@@ -63,7 +63,7 @@ namespace log4net.Layout
     /// </para>
     /// </remarks>
     /// <example>
-    /// You can use a default configuration. Note that default default default is used when no other arrangements exist.
+    /// You can use a default configuration. Note that default default default is used only when no other arrangements exist.
     /// 
     /// * to use the default default members:
     /// 
@@ -139,7 +139,7 @@ namespace log4net.Layout
     public class SerializedLayout : PatternLayout
     {
         #region Static defaults and initialization
-        
+
         /// <summary>
         /// This is the default serializing pattern converter name.
         /// Destination: <see cref="SerializerName"/>
@@ -273,8 +273,14 @@ namespace log4net.Layout
                 arrangement.AddArrangement(m_arrangement);
 
             var patternArrangement = ArrangementConverter.GetArrangement(ConversionPattern, converters);
-            if (patternArrangement != null) 
+            if (patternArrangement != null)
                 arrangement.AddArrangement(patternArrangement);
+
+            if (arrangement.Arrangements.Count == 0)
+            {
+                // cater for bare defaults
+                arrangement.AddArrangement(new DefaultArrangement());
+            }
 
             var serconv = SerializingConverter;
 
@@ -421,9 +427,11 @@ namespace log4net.Layout
         /// This method will be most useful for XML configuration.
         /// </summary>
         /// <param name="value">the arrangement</param>
-        public virtual void AddDefault(DefaultArrangement value)
+        public virtual void AddDefault(string value)
         {
-            m_arrangement.AddArrangement(value);
+            value = "DEFAULT!" + value;
+            var arrangement = log4net.Util.TypeConverters.ArrangementConverter.GetArrangement(value, new ConverterInfo[0]);
+            m_arrangement.AddArrangement(arrangement);
         }
 
         /// <summary>
@@ -432,9 +440,10 @@ namespace log4net.Layout
         /// This method will be most useful for XML configuration.
         /// </summary>
         /// <param name="value">the member</param>
-        public virtual void AddMember(IMember value)
+        public virtual void AddMember(string value)
         {
-            m_arrangement.AddArrangement(value);
+            var arrangement = log4net.Util.TypeConverters.ArrangementConverter.GetArrangement(value, new ConverterInfo[0]);
+            m_arrangement.AddArrangement(arrangement);
         }
 
         /// <summary>
@@ -443,18 +452,11 @@ namespace log4net.Layout
         /// This method will be most useful for XML configuration.
         /// </summary>
         /// <param name="value">the removal</param>
-        public virtual void AddRemove(RemovalArrangement value)
+        public virtual void AddRemove(string value)
         {
-            m_arrangement.AddArrangement(value);
-        }
-
-        /// <summary>
-        /// Remove all members.
-        /// This method will be most useful for XML configuration.
-        /// </summary>
-        public virtual void Clear()
-        {
-            m_arrangement.AddArrangement(new RemovalArrangement());
+            value = "REMOVE!" + value;
+            var arrangement = log4net.Util.TypeConverters.ArrangementConverter.GetArrangement(value, new ConverterInfo[0]);
+            m_arrangement.AddArrangement(arrangement);
         }
 
         #endregion

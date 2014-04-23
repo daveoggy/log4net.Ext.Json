@@ -86,9 +86,9 @@ namespace log4net.Layout.Arrangements
         /// <param name="converters">ignored</param>
         public override void Arrange(IList<IMember> members, ConverterInfo[] converters)
         {
-            var removals = GetMembersToRemove(members, m_nameRegex);
+            var removals = Enumerable.ToArray(GetMembersToRemove(members, m_nameRegex));
 
-            foreach (var v in Enumerable.ToArray(removals)) members.Remove(v);
+            foreach (var v in removals) members.Remove(v);
         }
 
         /// <summary>

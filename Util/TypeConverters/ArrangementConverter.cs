@@ -44,9 +44,16 @@ namespace log4net.Util.TypeConverters
         /// This is just a hack to grab converters from PatternLayout
         /// </summary>
         [ThreadStatic]
-        readonly static ConverterContext s_converter_context = new ConverterContext();
+        static ConverterContext s_converter_context;
 
         delegate IArrangement Call(string option);
+
+        static ConverterContext GetConverterContext()
+        {
+            var c = s_converter_context;
+            if (c == null) c = s_converter_context = new ConverterContext();
+            return c;
+        }
 
         class ConverterContext
         {
@@ -84,7 +91,7 @@ namespace log4net.Util.TypeConverters
         /// <returns>the arrangement instance</returns>
         public static IArrangement GetArrangement(string option, ConverterInfo[] converters)
         {
-            var arrangement = s_converter_context.Call(GetArrangementInternal, converters, option);
+            var arrangement = GetConverterContext().Call(GetArrangementInternal, converters, option);
             return arrangement;
         }
 
@@ -206,7 +213,7 @@ namespace log4net.Util.TypeConverters
             var op = match.Groups["Op"].Value;
             var value = match.Groups["Value"].Value;
             var option = match.Groups["Option"].Value;
-            var convs = s_converter_context.Get();
+            var convs = GetConverterContext().Get();
 
             if (!match.Success)
             {

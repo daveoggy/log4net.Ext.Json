@@ -176,7 +176,6 @@ namespace log4net.Layout.Pattern
                 SetUp(optarrangement, converters);
             }
 
-            SetUpDefaults(converters);
         }
 
         /// <summary>
@@ -194,21 +193,6 @@ namespace log4net.Layout.Pattern
             }
         }
 
-        /// <summary>
-        /// Check that there are some members, otherwise apply <see cref="DefaultArrangement"/>
-        /// </summary>
-        /// <param name="converters">converters to consider, can be null</param>
-        public virtual void SetUpDefaults(ConverterInfo[] converters)
-        {
-            var arrangedFetcher = Fetcher as IRawArrangedLayout;
-
-            if (arrangedFetcher != null && arrangedFetcher.Members.Count == 0)
-            {
-                // cater for bare defaults
-                var arrangement = new DefaultArrangement();
-                arrangement.Arrange(arrangedFetcher.Members, converters);
-            }
-        }
 
         /// <summary>
         /// Give us our default <see cref="Fetcher"/>

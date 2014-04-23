@@ -173,7 +173,7 @@ namespace log4net.Util.Stamps
 
                     try
                     {
-                        espan = Process.GetCurrentProcess().StartTime - epoch;
+                        espan = Process.GetCurrentProcess().StartTime.ToUniversalTime() - epoch;
                         s_ref_app_time = ConvertTimeSpanToSeconds(espan);
                     }
                     catch (Exception x)
@@ -234,7 +234,9 @@ namespace log4net.Util.Stamps
         /// <returns>seconds</returns>
         public static double GetSystemUpTime()
         {
-            return ConvertStopwatchTicksToSeconds(Stopwatch.GetTimestamp());
+            var ticks = Stopwatch.GetTimestamp();
+            var seconds = ConvertStopwatchTicksToSeconds(ticks);
+            return seconds;
         }
 
         /// <summary>
@@ -261,12 +263,14 @@ namespace log4net.Util.Stamps
         /// Get the epoch time requested
         /// </summary>
         /// <param name="ageRef"></param>
-        /// <returns>microseconds since epoch 1970</returns>
-        public static double GetEpochMicroTime(AgeReference ageRef)
+        /// <returns>seconds since epoch 1970</returns>
+        public static double GetEpochTime(AgeReference ageRef)
         {
             switch (ageRef)
             {
-                case AgeReference.Now: return s_ref_sys_time + GetSystemUpTime();
+                case AgeReference.Now: 
+                    var uptime = GetSystemUpTime();
+                    return s_ref_sys_time + uptime;
                 case AgeReference.Epoch1970: return 0;
                 case AgeReference.SystemStart: return s_ref_sys_time;
                 case AgeReference.ApplicationStart: return s_ref_app_time;
@@ -290,8 +294,8 @@ namespace log4net.Util.Stamps
         /// <returns>adjusted time value</returns>
         public static object GetTimeStampValue(AgeReference tfrom, AgeReference tto, double multiplier, bool round)
         {
-            var timeFrom = GetEpochMicroTime(tfrom);
-            var timeTo = GetEpochMicroTime(tto);
+            var timeFrom = GetEpochTime(tfrom);
+            var timeTo = GetEpochTime(tto);
             var value = AdjustTimeValue(timeTo - timeFrom, multiplier, round);
             return value;
         }
@@ -299,8 +303,8 @@ namespace log4net.Util.Stamps
         /// <summary>
         /// Adjust time value - Multiply and Round
         /// </summary>
-        /// <param name="value">epoch micro time value</param>
-        /// <param name="multiplier"> / 1,000,000 to get seconds</param>
+        /// <param name="value">epoch time value</param>
+        /// <param name="multiplier"> 1,000,000 to get microseconds</param>
         /// <param name="round">Round to a whole number</param>
         /// <returns>adjusted value</returns>
         public static double AdjustTimeValue(double value, double multiplier, bool round)

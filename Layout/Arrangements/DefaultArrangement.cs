@@ -120,7 +120,7 @@ namespace log4net.Layout.Arrangements
         /// </summary>
         public DefaultArrangement(string def)
         {
-            Default = def ?? DefaultDefaultDefault;
+            Default = String.IsNullOrEmpty(def) ? DefaultDefaultDefault : def;
             Config = new Dictionary<string, string>(ConfigDefaults);
         }
 
