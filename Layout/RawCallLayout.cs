@@ -154,7 +154,9 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => e.ExceptionObject, "exceptionobject"/*custom*/, "eo"/*custom*/);
             RawCallLayout.AddCalls(ref calls, e => e.Identity, "identity", "u");
             RawCallLayout.AddCalls(ref calls, e => e.UserName, "username", "w");
-            RawCallLayout.AddCalls(ref calls, e => e.Properties, "property", "properties", "mdc", "P", "X");
+
+            RawCallLayout.AddCalls(ref calls, e => e.GetProperties(), "property", "properties", "mdc", "P", "X");
+
             RawCallLayout.AddCalls(ref calls, e => e.LookupProperty("NDC"), "ndc", "x");
             RawCallLayout.AddCalls(ref calls, e => e.Domain, "appdomain", "a", "sourcename"/*custom*/);
 

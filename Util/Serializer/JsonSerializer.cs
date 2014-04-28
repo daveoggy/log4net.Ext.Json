@@ -22,6 +22,7 @@ using System.Collections;
 using System.Text;
 using log4net.ObjectRenderer;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace log4net.Util.Serializer
 {
@@ -40,7 +41,7 @@ namespace log4net.Util.Serializer
         /// <remarks>
         /// Creating JsonBuiltinSerializer here
         /// </remarks>
-        public static ISerializerFactory DefaultSerializerFactory = new JsonBuiltinSerializer.Factory();
+        public static ISerializerFactory DefaultSerializerFactory = new JsonSerializer.Factory();
 #else
         /// <summary>
         /// Which serializer will be used by default?
@@ -52,25 +53,55 @@ namespace log4net.Util.Serializer
 #endif
 
         /// <summary>
-        /// JSON escaped characters
+        /// Default JSON escaped characters
         /// </summary>
-        public static readonly IDictionary<char, string> EscapedChars = new Dictionary<char, string>()
+        public static readonly IDictionary<char, string> DefaultEscapedChars = new Dictionary<char, string>()
             {
                 {'"',"\\\""},
                 {'\\',"\\\\"},
-                {'/',"\\/"},
                 {'\b',"\\b"},
                 {'\f',"\\f"},
                 {'\n',"\\n"},
                 {'\r',"\\r"},
-                {'\t',"\\t"},                
+                {'\t',"\\t"}, 
+                // forward slash could be escaped instead of <> to allow javascript embedding
+                //{'/',"\\/"},
+                // but builtin serializer does it like this instead:
+                {'<',"\\u003c"},
+                {'>',"\\u003e"},               
             };
         #endregion
+
+        /// <summary>
+        /// JSON escaped characters
+        /// </summary>
+        public IDictionary<char, string> EscapedChars { get; set; }
+
+        /// <summary>
+        /// preserve object type in serialization. true => always, false => never, null => only if class is publicly visible
+        /// </summary>
+        public bool? SaveType { get; set; }
+
+        /// <summary>
+        /// if <see cref="SaveType"/> then this is the name it will be saved as
+        /// </summary>
+        public string TypeMemberName { get; set; }
 
         /// <summary>
         /// RendererMap given by the layout
         /// </summary>
         public RendererMap Map { get; set; }
+
+        /// <summary>
+        /// Construct instance - take <see cref="EscapedChars"/> from <see cref="DefaultEscapedChars"/>,
+        /// <see cref="SaveType"/> is false, <see cref="TypeMemberName"/> is "__type".
+        /// </summary>
+        public JsonSerializer()
+        {
+            EscapedChars = new Dictionary<char, string>(DefaultEscapedChars);
+            SaveType = false;
+            TypeMemberName = "__type";
+        }
 
         /// <summary>
         /// Serialize <paramref name="obj"/> to a JSON string
@@ -93,43 +124,35 @@ namespace log4net.Util.Serializer
         /// <param name="sb"></param>
         protected virtual void Serialize(object obj, StringBuilder sb)
         {
-            if (obj == null)
-            {
-                sb.Append("null");
-            }
-            else if (obj is IDictionary)
-            {
-                SerializeDictionary((IDictionary)obj, sb);
-            }
-            else if (obj is string)
-            {
-                SerializeString(obj, sb);
-            }
-            else if (obj is byte[])
-            {
-                var str = Encoding.UTF8.GetString((byte[])obj);
-                SerializeString(obj, sb);
-            }
-            else if (obj is DateTime)
-            {
-                SerializeDateTime((DateTime)obj, sb);
-            }
-            else if (obj is TimeSpan)
-            {
-                SerializeTimeSpan((TimeSpan)obj, sb);
-            }
-            else if (obj.GetType().IsPrimitive)
-            {
-                SerializePrimitive(obj, sb);
-            }
-            else if (obj is IEnumerable)
-            {
-                SerializeArray((IEnumerable)obj, sb);
-            }
-            else
-            {
-                SerializeObject(obj, sb);
-            }
+            var serialized = SerializeNull(obj, sb) // null gate first, others do not expect nulls
+                    || SerializeDictionary(obj as IDictionary, sb)
+                    || SerializeString(obj as string, sb)
+                    || SerializeChars(obj as char[], sb)
+                    || SerializeBytes(obj as byte[], sb)
+                    || SerializeDateTime(obj, sb)
+                    || SerializeTimeSpan(obj, sb)
+                    || SerializePrimitive(obj, sb)
+                    || SerializeEnum(obj, sb)
+                    || SerializeGuid(obj, sb)
+                    || SerializeUri(obj as Uri, sb)
+                    || SerializeArray(obj as IEnumerable, sb) // goes almost last not to interfere with string, char[], byte[]...
+                    || SerializeObject(obj, sb) // before last resort
+                    ;
+
+            if (!serialized)
+                SerializeString(Convert.ToString(obj), sb); // last resort
+        }
+
+        /// <summary>
+        /// Serialize null into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeNull(object obj, StringBuilder sb)
+        {
+            if (obj != null && !DBNull.Value.Equals(obj)) return false;
+            sb.Append("null");
+            return true;
         }
 
         /// <summary>
@@ -137,9 +160,11 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeDateTime(DateTime obj, StringBuilder sb)
+        protected virtual bool SerializeDateTime(object obj, StringBuilder sb)
         {
-            Serialize(obj.ToString("o"), sb);
+            if (!(obj is DateTime)) return false;
+            Serialize(((DateTime)obj).ToString("o"), sb);
+            return true;
         }
 
         /// <summary>
@@ -147,9 +172,11 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeTimeSpan(TimeSpan obj, StringBuilder sb)
+        protected virtual bool SerializeTimeSpan(object obj, StringBuilder sb)
         {
-            Serialize(obj.TotalMilliseconds, sb);
+            if (!(obj is TimeSpan)) return false;
+            Serialize(((TimeSpan)obj).TotalSeconds, sb);
+            return true;
         }
 
         /// <summary>
@@ -157,9 +184,39 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializePrimitive(object obj, StringBuilder sb)
+        protected virtual bool SerializePrimitive(object obj, StringBuilder sb)
         {
-            sb.Append(obj);
+            if (obj == null) return false;
+
+            var t = obj.GetType();
+
+            switch (t.FullName)
+            {
+                case "System.Double":
+                case "System.Float":
+                    sb.AppendFormat("{0:r}", obj);
+                    break;
+                case "System.Char":
+                    SerializeChars(new char[] { (char)obj }, sb);
+                    break;
+                case "System.Byte":
+                    SerializeBytes(new byte[] { (byte)obj }, sb);
+                    break;
+                case "System.Decimal":
+                    sb.Append(obj);
+                    break;
+                case "System.Boolean":
+                    sb.Append(true.Equals(obj) ? "true" : "false");
+                    break;
+                default:
+                    if (!t.IsPrimitive)
+                        return false;
+                    else
+                        sb.Append(obj);
+                    break;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -167,8 +224,10 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeDictionary(IDictionary obj, StringBuilder sb)
+        protected virtual bool SerializeDictionary(IDictionary obj, StringBuilder sb)
         {
+            if (obj == null) return false;
+
             sb.Append("{");
 
             bool first = true;
@@ -186,6 +245,8 @@ namespace log4net.Util.Serializer
             }
 
             sb.Append("}");
+
+            return true;
         }
 
         /// <summary>
@@ -193,8 +254,10 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeArray(IEnumerable obj, StringBuilder sb)
+        protected virtual bool SerializeArray(IEnumerable obj, StringBuilder sb)
         {
+            if (obj == null) return false;
+
             sb.Append("[");
 
             bool first = true;
@@ -210,6 +273,8 @@ namespace log4net.Util.Serializer
             }
 
             sb.Append("]");
+
+            return true;
         }
 
         /// <summary>
@@ -217,14 +282,24 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeObject(Object obj, StringBuilder sb)
+        protected virtual bool SerializeObject(Object obj, StringBuilder sb)
         {
-            var rendered = Map == null
-                        ? Convert.ToString(obj)
-                        : Map.FindAndRender(obj)
-                        ;
+            if (obj == null) return false;
 
-            SerializeString(rendered, sb);
+            var customSerializer = Map == null ? null : Map.Get(obj) as ISerializer;
+
+            if (customSerializer == null)
+            {
+                var dict = ObjToDict(obj, SaveType, TypeMemberName);
+                SerializeDictionary(dict, sb);
+            }
+            else
+            {
+                var json = customSerializer.Serialize(obj);
+                sb.Append(json);
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -232,8 +307,40 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void SerializeString(object obj, StringBuilder sb)
+        protected virtual bool SerializeBytes(byte[] obj, StringBuilder sb)
         {
+            if (obj == null) return false;
+
+            var str = Encoding.UTF8.GetString(obj);
+            SerializeString(str, sb);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Serialize escaped string into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeChars(char[] obj, StringBuilder sb)
+        {
+            if (obj == null) return false;
+
+            var str = new string(obj);
+            SerializeString(str, sb);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Serialize escaped string into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeString(object obj, StringBuilder sb)
+        {
+            if (obj == null) return false;
+
             var str = Convert.ToString(obj);
 
             sb.Append(@"""");
@@ -252,6 +359,89 @@ namespace log4net.Util.Serializer
             }
 
             sb.Append(@"""");
+
+            return true;
+        }
+
+        /// <summary>
+        /// Serialize URI into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeUri(Uri obj, StringBuilder sb)
+        {
+            if (obj == null) return false;
+
+            var str = Convert.ToString(obj);
+
+            return SerializeString(str, sb);
+        }
+
+        /// <summary>
+        /// Serialize enum into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeGuid(object obj, StringBuilder sb)
+        {
+            if (obj == null || !(obj is Guid)) return false;
+
+            var str = Convert.ToString(obj);
+
+            return SerializeString(str, sb);
+        }
+
+        /// <summary>
+        /// Serialize enum into a string builder
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="sb"></param>
+        protected virtual bool SerializeEnum(object obj, StringBuilder sb)
+        {
+            if (obj == null) return false;
+            if (!obj.GetType().IsEnum) return false;
+
+            var str = Convert.ToString(obj);
+
+            return SerializeString(str, sb);
+        }
+
+        /// <summary>
+        /// Convert objects fields and props into a dictionary
+        /// </summary>
+        /// <param name="obj">object to be turned into a dictionary</param>
+        /// <param name="saveType">preserve the type of the object? null => only when publicly visible</param>
+        /// <param name="typeMemberName">where to preserve the type</param>
+        /// <returns>dictionary of props and fields</returns>
+        public static IDictionary ObjToDict(object obj, bool? saveType, string typeMemberName)
+        {
+            if (obj == null) return null;
+
+            var flags = BindingFlags.Instance
+                        | BindingFlags.Public
+                        | BindingFlags.GetField
+                        | BindingFlags.GetProperty
+                        ;
+
+            var type = obj.GetType();
+            var props = type.GetProperties(flags);
+            var flds = type.GetFields(flags);
+            var dict = new Dictionary<string, object>(props.Length + flds.Length + 1);
+
+            foreach (var fld in flds)
+            {
+                dict[fld.Name] = fld.GetValue(obj);
+            }
+
+            foreach (var prop in props)
+            {
+                dict[prop.Name] = prop.GetValue(obj, null);
+            }
+
+            if (true.Equals(saveType) || (saveType == null && type.IsVisible))
+                dict[typeMemberName] = type.FullName;
+
+            return dict;
         }
 
         /// <summary>

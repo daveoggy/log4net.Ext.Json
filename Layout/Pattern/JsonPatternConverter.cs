@@ -27,6 +27,7 @@ using log4net.ObjectRenderer;
 using log4net.Util;
 using log4net.Util.TypeConverters;
 using log4net.Util.Serializer;
+using log4net.Layout.Decorators;
 
 #if LOG4NET_1_2_10_COMPATIBLE
 using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
@@ -53,10 +54,18 @@ namespace log4net.Layout.Pattern
         public IObjectRenderer Renderer { get; set; }
 
         /// <summary>
-        /// What to render is decided here. By default it is a <see cref="RawFlatArrangedLayout"/> 
+        /// What to render is decided here. By default it is a <see cref="RawArrangedLayout"/> 
         /// and it's members can be arranged - see <see cref="ActivateOptions"/>
         /// </summary>
         public IRawLayout Fetcher { get; set; }
+
+        /// <summary>
+        /// members can be modified by decorators before they are serialized
+        /// </summary>
+        /// <remarks>
+        /// This is used to unite different JSON serializers for instance in <see cref="StandardTypesDecorator"/>
+        /// </remarks>
+        public IDecorator[] Decorators { get; set; }
 
         #endregion
 
@@ -65,11 +74,9 @@ namespace log4net.Layout.Pattern
         /// </summary>
         public JsonPatternConverter()
         {
-#if !LOG4NET_1_2_10_COMPATIBLE     
+#if !LOG4NET_1_2_10_COMPATIBLE
             this.Properties = new PropertiesDictionary();
 #endif
-            this.Fetcher = CreateFetcher(); 
-            this.Renderer = JsonObjectRenderer.Default;
 
             // we're not going to bother, user decides where the exception will go.
             this.IgnoresException = false;
@@ -93,6 +100,8 @@ namespace log4net.Layout.Pattern
                 RenderObject(null, state, writer);
             }
         }
+
+
 
         /// <summary>
         /// Render what comes from the  <see cref="Fetcher" /> using  <see cref="Renderer" /> or default renderer.
@@ -118,6 +127,9 @@ namespace log4net.Layout.Pattern
         /// <param name="writer">writer to write obj to</param>
         public void RenderObject(RendererMap map, object obj, TextWriter writer)
         {
+            foreach (var decorator in Decorators)
+                obj = decorator.Decorate(obj);
+
             var renderer = Renderer
                 ?? (map == null ? null : map.Get(obj))
                 ?? JsonObjectRenderer.Default ?? map.DefaultRenderer;
@@ -131,12 +143,11 @@ namespace log4net.Layout.Pattern
 
         /// <summary>
         /// Activate the options that were previously set with calls to properties.
-        /// <see cref="ISerializerFactory"/> can be passed in Properties["serializerfactory"] to the <see cref="JsonObjectRenderer.Factory"/> to manufacture a serializer.
         /// <see cref="Renderer"/> of type <see cref="IObjectRenderer"/> is taken from Properties["renderer"] if present.
         /// <see cref="Fetcher"/> of type <see cref="IRawLayout"/> is taken from Properties["fetcher"] if present
         /// <see cref="IArrangement"/> is taken from Properties["arrangement"] and from <i>option</i>.
         /// Converters to be used in arrangements are taken from Properties["converters"], an array of <see cref="ConverterInfo"/>.
-        /// Members are arranged using <see cref="SetUp"/> and <see cref="SetUpDefaults"/>
+        /// Members are arranged using <see cref="SetUp"/>
         /// </summary>
         /// <remarks>
         /// <para>
@@ -155,27 +166,27 @@ namespace log4net.Layout.Pattern
         public virtual void ActivateOptions()
         {
 #if LOG4NET_1_2_10_COMPATIBLE
+            var renderer = null as IObjectRenderer;
+            var fetcher = null as IRawLayout;
+            var decorators = null as IEnumerable<IDecorator>;
             var converters = null as ConverterInfo[];
             var arrangement = null as IArrangement;
 #else
-            // this allows the serializer to be injected easily
-            var factory = (ISerializerFactory)Properties["serializerfactory"];
-            if (factory != null) Renderer = new JsonObjectRenderer() { Factory = factory };
-
-            Renderer = (IObjectRenderer)Properties["renderer"] ?? Renderer ;
-            Fetcher = (IRawLayout)Properties["fetcher"] ?? Fetcher ?? CreateFetcher();
-            var converters = ((ConverterInfo[])Properties["converters"]);
-            var arrangement = (IArrangement)Properties["arrangement"];
+            var renderer = Properties["renderer"] as IObjectRenderer;
+            var fetcher = Properties["fetcher"] as IRawLayout;
+            var decorators = Properties["decorators"] as IEnumerable<IDecorator>;
+            var converters = Properties["converters"] as IEnumerable<ConverterInfo>;
+            var arrangement = Properties["arrangement"] as IArrangement;
 #endif
-            
-            SetUp(arrangement, converters);
+
+            SetUp(arrangement, converters, fetcher, renderer, decorators);
 
             if (!String.IsNullOrEmpty(Option))
             {
-                var optarrangement = ArrangementConverter.GetArrangement(Option, converters);
-                SetUp(optarrangement, converters);
+                var convertersArray = converters == null ? null : Enumerable.ToArray(converters);
+                var optarrangement = ArrangementConverter.GetArrangement(Option, convertersArray);
+                Arrange(optarrangement, converters);
             }
-
         }
 
         /// <summary>
@@ -183,13 +194,32 @@ namespace log4net.Layout.Pattern
         /// </summary>
         /// <param name="arrangement">arangement to use, can be null</param>
         /// <param name="converters">converters to consider, can be null</param>
-        public virtual void SetUp(IArrangement arrangement, ConverterInfo[] converters)
+        /// <param name="fetcher">fetches an object from a logging event</param>
+        /// <param name="renderer">serializes the object</param>
+        /// <param name="decorators">decorates the object before serialization</param>
+        public virtual void SetUp(IArrangement arrangement, IEnumerable<ConverterInfo> converters, IRawLayout fetcher, IObjectRenderer renderer, IEnumerable<IDecorator> decorators)
         {
+            var decoratorsArray = decorators == null ? null : Enumerable.ToArray(decorators);
+            Fetcher = fetcher ?? Fetcher ?? CreateFetcher();
+            Decorators = decoratorsArray ?? Decorators ?? CreateDecorators();
+            Renderer = renderer ?? Renderer ?? CreateRenderer();
+            Arrange(arrangement, converters);
+        }
+
+        /// <summary>
+        /// Arrange members
+        /// </summary>
+        /// <param name="arrangement">by arrangement</param>
+        /// <param name="converters">with converters</param>
+        protected virtual void Arrange(IArrangement arrangement, IEnumerable<ConverterInfo> converters)
+        {
+            var convertersArray = converters == null ? null : Enumerable.ToArray(converters);
+
             var arrangedFetcher = Fetcher as IRawArrangedLayout;
 
             if (arrangedFetcher != null && arrangement != null)
             {
-                arrangement.Arrange(arrangedFetcher.Members, converters);
+                arrangement.Arrange(arrangedFetcher.Members, convertersArray);
             }
         }
 
@@ -200,9 +230,27 @@ namespace log4net.Layout.Pattern
         /// <returns>fetcher</returns>
         protected virtual IRawLayout CreateFetcher()
         {
-            return new RawFlatArrangedLayout();
+            return new RawArrangedLayout();
         }
-        
+
+        /// <summary>
+        /// Give us our default <see cref="Decorators"/>
+        /// </summary>
+        /// <returns>fetcher</returns>
+        protected virtual IDecorator[] CreateDecorators()
+        {
+            return new IDecorator[0];
+        }
+
+        /// <summary>
+        /// Give us our default <see cref="Renderer"/>
+        /// </summary>
+        /// <returns>renderer</returns>
+        protected virtual IObjectRenderer CreateRenderer()
+        {
+            return JsonObjectRenderer.Default;
+        }
+
         #endregion
     }
 }

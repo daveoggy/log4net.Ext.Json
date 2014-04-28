@@ -73,7 +73,7 @@ namespace log4net.Layout.Arrangements
                             + "thread;"
                             + "message;"
                             + "exception;"     
-                            + "property;"                         
+                            + "ndc|%ndc;"                         
                         },
                         {"nxlog",
                             "EventTime:date;"
@@ -82,8 +82,8 @@ namespace log4net.Layout.Arrangements
                             + "Logger;"
                             + "Thread;"
                             + "Message;"
-                            + "Exception;"         
-                            + "Property;"                                                                  
+                            + "Exception;"    
+                            + "NDC|%ndc;"                                                               
                         }
                     };
 

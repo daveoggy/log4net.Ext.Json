@@ -35,11 +35,21 @@ namespace log4net.Util.Serializer
     /// A wrapper to <see cref="JavaScriptSerializer"/> of NET35
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class JsonBuiltinSerializer : JavaScriptSerializer, ISerializer
+    public class JsonBuiltinSerializer : ISerializer
     {
-        object ISerializer.Serialize(object obj)
+        /// <summary>
+        /// The instance of JavaScriptSerializer to use
+        /// </summary>
+        public JavaScriptSerializer BuiltinSerializer = new JavaScriptSerializer();
+
+        /// <summary>
+        /// Serialize object using builtin JavaScriptSerializer
+        /// </summary>
+        /// <param name="obj">object to serialize</param>
+        /// <returns>serialized data</returns>
+        public object Serialize(object obj)
         {
-            return base.Serialize(obj);
+            return BuiltinSerializer.Serialize(obj);
         }
 
         /// <summary>

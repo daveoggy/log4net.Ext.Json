@@ -25,6 +25,9 @@ using log4net.Layout.Members;
 using log4net.Layout.Pattern;
 using log4net.Util;
 using log4net.Util.TypeConverters;
+using System.Collections.Generic;
+using log4net.Layout.Decorators;
+using log4net.ObjectRenderer;
 
 #if LOG4NET_1_2_10_COMPATIBLE
 using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
@@ -68,6 +71,7 @@ namespace log4net.Layout
     /// * to use the default default members:
     /// 
     ///         <default />
+    ///       - it is equivalent to leaving Layout without any arrangements. In that case the defaults are implied.
     /// 
     /// * to use the default members suitable for nxlog:
     ///     
@@ -120,8 +124,8 @@ namespace log4net.Layout
     /// You can remove members from default:
     /// 
     ///         <default />
-    ///         <remove value="Message" />
-    ///         <arrangement value="Data:message" />
+    ///         <remove value="message" />
+    ///         <arrangement value="data:message" />
     /// 
     /// </example>
     /// <example>
@@ -173,9 +177,24 @@ namespace log4net.Layout
         #region Internal fields
 
         /// <summary>
-        /// Keep the collected arrangements here.
+        /// Keep the collected arrangements here, pass them to the serializing pattern converter
         /// </summary>
-        private readonly MultipleArrangement m_arrangement = new MultipleArrangement();
+        protected readonly MultipleArrangement m_arrangement = new MultipleArrangement();
+
+        /// <summary>
+        /// decorators to pass to the serializing pattern converter
+        /// </summary>
+        protected readonly List<IDecorator> m_decorators = new List<IDecorator>();
+
+        /// <summary>
+        /// renderer to pass to the serializing pattern converter
+        /// </summary>
+        protected IObjectRenderer m_renderer = null;
+
+        /// <summary>
+        /// fetcher to pass to the serializing pattern converter
+        /// </summary>
+        protected IRawLayout m_fetcher = null;
 
         /// <summary>
         /// FIXME: Who knows why the parrent class calls ActivateOptions() from constructor?
@@ -296,7 +315,7 @@ namespace log4net.Layout
             }
 
             if (serconv != null)
-                SetUpSerializingConverter(serconv, converters, arrangement);
+                SetUpSerializingConverter(serconv, converters, arrangement, m_fetcher, m_renderer, m_decorators.ToArray());
         }
 
         #endregion
@@ -356,35 +375,42 @@ namespace log4net.Layout
         }
 
         /// <summary>
-        /// Add <see cref="PatternConverter.Properties"/>, call <see cref="IOptionHandler.ActivateOptions"/> 
+        /// Add <see cref="PatternConverter.Properties"/> or make use of <see cref="ISerializingPatternConverter.SetUp"/>, 
+        /// call <see cref="IOptionHandler.ActivateOptions"/> 
         /// </summary>
-        /// <param name="conv">serializer to be set up</param>
+        /// <param name="conv">serializer to be set up, see also <seealso cref="ISerializingPatternConverter"/></param>
         /// <param name="converters">converters to be used collected from parent class</param>
         /// <param name="arrangement">arrangement to be used collected from parent class</param>
+        /// <param name="fetcher">fetcher to use</param>
+        /// <param name="renderer">renderer to use</param>
+        /// <param name="decorators">decorators to use</param>
         /// <remarks>
         /// <para>
         /// Please note that properties are only supported with log4net 1.2.11 and above.
         /// </para>
         /// </remarks>
-        protected virtual void SetUpSerializingConverter(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement)
+        protected virtual void SetUpSerializingConverter(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement, IRawLayout fetcher, IObjectRenderer renderer, IDecorator[] decorators)
         {
             var serializedConv = conv as ISerializingPatternConverter;
 
             if (serializedConv != null)
             {
-                serializedConv.SetUp(arrangement, converters);
+                serializedConv.SetUp(arrangement, converters, fetcher, renderer, decorators);
             }
 #if !LOG4NET_1_2_10_COMPATIBLE
             else
             {
-                LogLog.Warn(GetType(), String.Format("Converter is not a ISerializingPatternConverter: {0}. Passing arrangement and converters as properties.", conv));
+                LogLog.Warn(GetType(), String.Format("Converter is not a ISerializingPatternConverter: {0}. Passing fetcher, renderer, decorators, arrangement and converters as properties.", conv));
                 conv.Properties["arrangement"] = arrangement;
                 conv.Properties["converters"] = converters;
+                conv.Properties["fetcher"] = fetcher;
+                conv.Properties["renderer"] = renderer;
+                conv.Properties["decorators"] = decorators;
             }
 #else
             else
             {
-                LogLog.Error(String.Format("Converter is not a ISerializingPatternConverter: {0}. Since converter properties are not supported before 1.2.11, no arrangements can be passed. You can still use the converter option with PatternLayout.", conv));
+                LogLog.Error(String.Format("Converter is not a ISerializingPatternConverter: {0}. Since converter properties are not supported before 1.2.11, no fetcher, renderer, decorators or arrangements can be passed. You can still use the converter option with PatternLayout.", conv));
             }
 #endif
 
@@ -457,6 +483,42 @@ namespace log4net.Layout
             value = "REMOVE!" + value;
             var arrangement = log4net.Util.TypeConverters.ArrangementConverter.GetArrangement(value, new ConverterInfo[0]);
             m_arrangement.AddArrangement(arrangement);
+        }
+
+        /// <summary>
+        /// Add renderer to be passed to serializing pattern converter
+        /// </summary>
+        /// <param name="value">renderer</param>
+        /// <remarks>
+        /// This method will be most useful for XML configuration.
+        /// </remarks>
+        public virtual void AddRenderer(IObjectRenderer value)
+        {
+            m_renderer = value;
+        }
+
+        /// <summary>
+        /// Add fetcher to be passed to serializing pattern converter
+        /// </summary>
+        /// <param name="value">fetcher</param>
+        /// <remarks>
+        /// This method will be most useful for XML configuration.
+        /// </remarks>
+        public virtual void AddFetcher(IRawLayout value)
+        {
+            m_fetcher = value;
+        }
+
+        /// <summary>
+        /// Add decorators to be passed to serializing pattern converter
+        /// </summary>
+        /// <param name="value">one decorator</param>
+        /// <remarks>
+        /// This method will be most useful for XML configuration.
+        /// </remarks>
+        public virtual void AddDecorator(IDecorator value)
+        {
+            m_decorators.Add(value);
         }
 
         #endregion

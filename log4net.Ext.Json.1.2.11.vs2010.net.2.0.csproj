@@ -66,8 +66,10 @@
     <Compile Include="Layout\Arrangements\NoArrangement.cs" />
     <Compile Include="Layout\Arrangements\OptionArrangement.cs" />
     <Compile Include="Layout\Arrangements\MultipleArrangement.cs" />
+    <Compile Include="Layout\Decorators\StandardTypesFlatDecorator.cs" />
+    <Compile Include="Layout\Decorators\IDecorator.cs" />
+    <Compile Include="Layout\Decorators\StandardTypesDecorator.cs" />
     <Compile Include="Layout\IRawArrangedLayout.cs" />
-    <Compile Include="Layout\RawFlatArrangedLayout.cs" />
     <Compile Include="Layout\Pattern\ISerializingPatternConverter.cs" />
     <Compile Include="Layout\RawCallLayout.cs" />
     <Compile Include="Layout\RawArrangedLayout.cs" />

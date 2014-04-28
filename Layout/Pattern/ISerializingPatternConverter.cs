@@ -18,10 +18,10 @@
 #endregion
 
 using System.Collections.Generic;
-using log4net.Layout.Members;
+using log4net.Layout.Arrangements;
+using log4net.Layout.Decorators;
 using log4net.ObjectRenderer;
 using log4net.Util;
-using log4net.Layout.Arrangements;
 
 #if LOG4NET_1_2_10_COMPATIBLE
 using ConverterInfo = log4net.Layout.PatternLayout.ConverterInfo;
@@ -44,6 +44,9 @@ namespace log4net.Layout.Pattern
         /// </summary>
         /// <param name="arrangement">arrangement to organize the serialized members, can be null</param>
         /// <param name="converters">converters to pass to arrangements, can be null</param>
-        void SetUp(IArrangement arrangement, ConverterInfo[] converters);
+        /// <param name="fetcher">fetches an object from a logging event</param>
+        /// <param name="renderer">serializes the object</param>
+        /// <param name="decorators">decorates the object before serialization</param>
+        void SetUp(IArrangement arrangement, IEnumerable<ConverterInfo> converters, IRawLayout fetcher, IObjectRenderer renderer, IEnumerable<IDecorator> decorators);
     }
 }
