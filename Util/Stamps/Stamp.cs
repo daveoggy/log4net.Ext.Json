@@ -260,7 +260,7 @@ namespace log4net.Util.Stamps
         }
 
         /// <summary>
-        /// Get the epoch time requested
+        /// Get the epoch time requested in seconds
         /// </summary>
         /// <param name="ageRef"></param>
         /// <returns>seconds since epoch 1970</returns>
@@ -289,10 +289,10 @@ namespace log4net.Util.Stamps
         /// </summary>
         /// <param name="tfrom">start of time span definition</param>
         /// <param name="tto">end of timespan definition</param>
-        /// <param name="multiplier"> / 1,000,000 to get seconds</param>
+        /// <param name="multiplier">give 1000000 to get microseconds; 1.0/24/3600 to get days</param>
         /// <param name="round">Round to a whole number</param>
         /// <returns>adjusted time value</returns>
-        public static object GetTimeStampValue(AgeReference tfrom, AgeReference tto, double multiplier, bool round)
+        public static double GetTimeStampValue(AgeReference tfrom, AgeReference tto, double multiplier, bool round)
         {
             var timeFrom = GetEpochTime(tfrom);
             var timeTo = GetEpochTime(tto);

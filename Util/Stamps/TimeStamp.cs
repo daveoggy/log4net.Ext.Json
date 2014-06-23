@@ -40,7 +40,7 @@ namespace log4net.Util.Stamps
         public bool Round { get; set; }
 
         /// <summary>
-        /// Change unit by multiplying the default seconds. For instance * 1000 for miliseconds.
+        /// Change unit by multiplying the default seconds. Give 1000000 to get microseconds; 1.0/24/3600 to get days.
         /// </summary>
         public double Multiplier { get; set; }
 
