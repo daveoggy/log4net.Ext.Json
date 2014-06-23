@@ -51,12 +51,12 @@ namespace log4net.Layout
         /// <summary>
         /// Cache the website name
         /// </summary>
-        static string s_websitename = null;
+        static string s_webappname = null;
 #else
         /// <summary>
         /// Cache the website name
         /// </summary>
-        static string s_websitename = System.Web.Hosting.HostingEnvironment.SiteName;
+        static string s_webappname = System.Web.Hosting.HostingEnvironment.SiteName;
 #endif
 
         /// <summary>
@@ -158,17 +158,17 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => e.GetProperties(), "property", "properties", "mdc", "P", "X");
 
             RawCallLayout.AddCalls(ref calls, e => e.LookupProperty("NDC"), "ndc", "x");
-            RawCallLayout.AddCalls(ref calls, e => e.Domain, "appdomain", "a", "sourcename"/*custom*/);
+            RawCallLayout.AddCalls(ref calls, e => e.Domain, "appdomain", "a");
 
-            if (s_websitename == null)
+            if (s_webappname == null)
             {
-                RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine, "sitepath" /*custom*/);
-                RawCallLayout.AddCalls(ref calls, e => e.Domain, "sitename" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine, "apppath" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => e.Domain, "appname" /*custom*/);
             }
             else
             {
-                RawCallLayout.AddCalls(ref calls, e => e.Domain, "sitepath" /*custom*/);
-                RawCallLayout.AddCalls(ref calls, e => s_websitename, "sitename" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => e.Domain, "apppath" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => s_webappname, "appname" /*custom*/);
             }
 
             RawCallLayout.AddCalls(ref calls, e => e.LocationInformation.ClassName, "type", "class", "C");

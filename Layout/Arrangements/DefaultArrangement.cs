@@ -68,7 +68,7 @@ namespace log4net.Layout.Arrangements
                         {"default",
                             "date;"
                             + "level;"
-                            + "sitename;"
+                            + "appname;"
                             + "logger;"
                             + "thread;"
                             + "message;"
@@ -78,7 +78,7 @@ namespace log4net.Layout.Arrangements
                         {"nxlog",
                             "EventTime:date;"
                             + "Severity:level;"
-                            + "SourceName:sitename;"
+                            + "SourceName:appname;"
                             + "Logger;"
                             + "Thread;"
                             + "Message;"
