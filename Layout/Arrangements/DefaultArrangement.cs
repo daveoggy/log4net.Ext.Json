@@ -70,20 +70,20 @@ namespace log4net.Layout.Arrangements
                             + "level;"
                             + "appname;"
                             + "logger;"
-                            + "thread;"
+                            + "thread;"   
+                            + "ndc|%ndc;"  
                             + "message;"
-                            + "exception;"     
-                            + "ndc|%ndc;"                         
+                            + "exception;"                         
                         },
                         {"nxlog",
                             "EventTime:date;"
                             + "Severity:level;"
                             + "SourceName:appname;"
                             + "Logger;"
-                            + "Thread;"
+                            + "Thread;"  
+                            + "NDC|%ndc;"  
                             + "Message;"
-                            + "Exception;"    
-                            + "NDC|%ndc;"                                                               
+                            + "Exception;"                                                               
                         }
                     };
 

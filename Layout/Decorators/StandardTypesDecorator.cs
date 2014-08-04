@@ -18,9 +18,20 @@ namespace log4net.Layout.Decorators
         public bool? SaveType { get; set; }
 
         /// <summary>
+        /// Call ToString and save the string
+        /// </summary>
+        public bool? Stringify { get; set; }
+
+        /// <summary>
         /// if <see cref="SaveType"/> then this is the name it will be saved as
         /// </summary>
         public string TypeMemberName { get; set; }
+
+        /// <summary>
+        /// if <see cref="Stringify"/> then this is the name it will be saved as
+        /// </summary>
+        public string StringMemberName { get; set; }
+
 
         /// <summary>
         /// default constructor - <see cref="TypeMemberName"/> is "@type" and <see cref="SaveType"/> is null
@@ -104,6 +115,13 @@ namespace log4net.Layout.Decorators
             if (str != null)
             {
                 result = str;
+                return true;
+            }
+
+            var sf = obj as SystemStringFormat;
+            if (sf != null)
+            {
+                result = sf.ToString();
                 return true;
             }
 
@@ -354,7 +372,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done</returns>
         protected virtual bool StandardObject(object obj, ref object result, IDictionary flatdict, string path = null)
         {
-            return StandardDictionary(log4net.Util.Serializer.JsonSerializer.ObjToDict(obj, SaveType, TypeMemberName), ref result, flatdict, path);
+            return StandardDictionary(log4net.Util.Serializer.JsonSerializer.ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName), ref result, flatdict, path);
         }
 
 

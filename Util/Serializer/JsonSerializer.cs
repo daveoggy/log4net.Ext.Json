@@ -68,7 +68,8 @@ namespace log4net.Util.Serializer
                 //{'/',"\\/"},
                 // but builtin serializer does it like this instead:
                 {'<',"\\u003c"},
-                {'>',"\\u003e"},               
+                {'>',"\\u003e"},      
+                {'&',"\\u0026"},             
             };
         #endregion
 
@@ -83,9 +84,19 @@ namespace log4net.Util.Serializer
         public bool? SaveType { get; set; }
 
         /// <summary>
+        /// Call ToString and save the string
+        /// </summary>
+        public bool? Stringify { get; set; }
+
+        /// <summary>
         /// if <see cref="SaveType"/> then this is the name it will be saved as
         /// </summary>
         public string TypeMemberName { get; set; }
+
+        /// <summary>
+        /// if <see cref="Stringify"/> then this is the name it will be saved as
+        /// </summary>
+        public string StringMemberName { get; set; }
 
         /// <summary>
         /// RendererMap given by the layout
@@ -100,7 +111,9 @@ namespace log4net.Util.Serializer
         {
             EscapedChars = new Dictionary<char, string>(DefaultEscapedChars);
             SaveType = false;
+            Stringify = false;
             TypeMemberName = "__type";
+            StringMemberName = "String";
         }
 
         /// <summary>
@@ -290,7 +303,7 @@ namespace log4net.Util.Serializer
 
             if (customSerializer == null)
             {
-                var dict = ObjToDict(obj, SaveType, TypeMemberName);
+                var dict = ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName);
                 SerializeDictionary(dict, sb);
             }
             else
@@ -353,6 +366,9 @@ namespace log4net.Util.Serializer
                 if (EscapedChars.TryGetValue(c, out cstring))
                     sb.Append(cstring);
                 else if (c < 32 || c > 126)
+                    // c<32 nonprintable
+                    // c=127 nonptintable
+                    // c>127 encoding specific
                     sb.AppendFormat("\\u{0:X4}", (int)c);
                 else
                     sb.Append(c);
@@ -412,8 +428,10 @@ namespace log4net.Util.Serializer
         /// <param name="obj">object to be turned into a dictionary</param>
         /// <param name="saveType">preserve the type of the object? null => only when publicly visible</param>
         /// <param name="typeMemberName">where to preserve the type</param>
+        /// <param name="stringify">call ToString() and save it</param>
+        /// <param name="stringMemberName">where to preserve the string</param>
         /// <returns>dictionary of props and fields</returns>
-        public static IDictionary ObjToDict(object obj, bool? saveType, string typeMemberName)
+        public static IDictionary ObjToDict(object obj, bool? saveType, string typeMemberName, bool? stringify, string stringMemberName)
         {
             if (obj == null) return null;
 
@@ -440,6 +458,9 @@ namespace log4net.Util.Serializer
 
             if (true.Equals(saveType) || (saveType == null && type.IsVisible))
                 dict[typeMemberName] = type.FullName;
+
+            if (true.Equals(stringify))
+                dict[stringMemberName] = Convert.ToString(obj);
 
             return dict;
         }

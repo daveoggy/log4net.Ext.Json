@@ -220,7 +220,7 @@ namespace log4net.Util.Stamps
         }
 
         /// <summary>
-        /// Get a statically incremented number in a thread safe manner
+        /// Set a statically incremented number in a thread safe manner
         /// </summary>
         /// <returns>sequence number</returns>
         public static long SetSequence(long value)
