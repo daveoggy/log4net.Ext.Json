@@ -34,23 +34,6 @@ namespace log4net.Util.Serializer
     public class JsonSerializer : ISerializer
     {
         #region statics
-#if FRAMEWORK_3_5_OR_ABOVE && !CLIENT_PROFILE && !NETCF
-        /// <summary>
-        /// Which serializer will be used by default?
-        /// </summary>
-        /// <remarks>
-        /// Creating JsonBuiltinSerializer here
-        /// </remarks>
-        public static ISerializerFactory DefaultSerializerFactory = new JsonSerializer.Factory();
-#else
-        /// <summary>
-        /// Which serializer will be used by default?
-        /// </summary>
-        /// <remarks>
-        /// Creating JsonSerializer here
-        /// </remarks>
-        public static ISerializerFactory DefaultSerializerFactory = new JsonSerializer.Factory();
-#endif
 
         /// <summary>
         /// Default JSON escaped characters
@@ -71,6 +54,15 @@ namespace log4net.Util.Serializer
                 {'>',"\\u003e"},      
                 {'&',"\\u0026"},             
             };
+
+        /// <summary>
+        /// Which serializer will be used by default?
+        /// </summary>
+        /// <remarks>
+        /// Creating JsonBuiltinSerializer here
+        /// </remarks>
+        public static ISerializer DefaultSerializer = new JsonSerializer();
+
         #endregion
 
         /// <summary>
@@ -99,11 +91,6 @@ namespace log4net.Util.Serializer
         public string StringMemberName { get; set; }
 
         /// <summary>
-        /// RendererMap given by the layout
-        /// </summary>
-        public RendererMap Map { get; set; }
-
-        /// <summary>
         /// Construct instance - take <see cref="EscapedChars"/> from <see cref="DefaultEscapedChars"/>,
         /// <see cref="SaveType"/> is false, <see cref="TypeMemberName"/> is "__type".
         /// </summary>
@@ -121,11 +108,11 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj">object to serialize</param>
         /// <returns>JSON string</returns>
-        public object Serialize(object obj)
+        public object Serialize(object obj, RendererMap map)
         {
             var sb = new StringBuilder();
 
-            Serialize(obj, sb);
+            Serialize(obj, sb, map);
 
             return sb.ToString();
         }
@@ -135,10 +122,10 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual void Serialize(object obj, StringBuilder sb)
+        protected virtual void Serialize(object obj, StringBuilder sb, RendererMap map)
         {
             var serialized = SerializeNull(obj, sb) // null gate first, others do not expect nulls
-                    || SerializeDictionary(obj as IDictionary, sb)
+                    || SerializeDictionary(obj as IDictionary, sb, map)
                     || SerializeString(obj as string, sb)
                     || SerializeChars(obj as char[], sb)
                     || SerializeBytes(obj as byte[], sb)
@@ -148,8 +135,8 @@ namespace log4net.Util.Serializer
                     || SerializeEnum(obj, sb)
                     || SerializeGuid(obj, sb)
                     || SerializeUri(obj as Uri, sb)
-                    || SerializeArray(obj as IEnumerable, sb) // goes almost last not to interfere with string, char[], byte[]...
-                    || SerializeObject(obj, sb) // before last resort
+                    || SerializeArray(obj as IEnumerable, sb, map) // goes almost last not to interfere with string, char[], byte[]...
+                    || SerializeObject(obj, sb, map) // before last resort
                     ;
 
             if (!serialized)
@@ -176,7 +163,7 @@ namespace log4net.Util.Serializer
         protected virtual bool SerializeDateTime(object obj, StringBuilder sb)
         {
             if (!(obj is DateTime)) return false;
-            Serialize(((DateTime)obj).ToString("o"), sb);
+            SerializeString(((DateTime)obj).ToString("o"), sb);
             return true;
         }
 
@@ -188,7 +175,7 @@ namespace log4net.Util.Serializer
         protected virtual bool SerializeTimeSpan(object obj, StringBuilder sb)
         {
             if (!(obj is TimeSpan)) return false;
-            Serialize(((TimeSpan)obj).TotalSeconds, sb);
+            SerializePrimitive(((TimeSpan)obj).TotalSeconds, sb);
             return true;
         }
 
@@ -237,7 +224,7 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual bool SerializeDictionary(IDictionary obj, StringBuilder sb)
+        protected virtual bool SerializeDictionary(IDictionary obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;
 
@@ -254,7 +241,7 @@ namespace log4net.Util.Serializer
 
                 sb.AppendFormat(@"""{0}"":", entry.Key);
 
-                Serialize(entry.Value, sb);
+                Serialize(entry.Value, sb, map);
             }
 
             sb.Append("}");
@@ -267,7 +254,7 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual bool SerializeArray(IEnumerable obj, StringBuilder sb)
+        protected virtual bool SerializeArray(IEnumerable obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;
 
@@ -282,7 +269,7 @@ namespace log4net.Util.Serializer
                 else
                     sb.Append(",");
 
-                Serialize(item, sb);
+                Serialize(item, sb, map);
             }
 
             sb.Append("]");
@@ -295,20 +282,20 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="sb"></param>
-        protected virtual bool SerializeObject(Object obj, StringBuilder sb)
+        protected virtual bool SerializeObject(Object obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;
 
-            var customSerializer = Map == null ? null : Map.Get(obj) as ISerializer;
+            var customSerializer = map == null ? null : map.Get(obj) as ISerializer;
 
             if (customSerializer == null)
             {
                 var dict = ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName);
-                SerializeDictionary(dict, sb);
+                SerializeDictionary(dict, sb, map);
             }
             else
             {
-                var json = customSerializer.Serialize(obj);
+                var json = customSerializer.Serialize(obj, map);
                 sb.Append(json);
             }
 
@@ -463,25 +450,6 @@ namespace log4net.Util.Serializer
                 dict[stringMemberName] = Convert.ToString(obj);
 
             return dict;
-        }
-
-        /// <summary>
-        /// Creates JsonSerializer
-        /// </summary>
-        public class Factory : ISerializerFactory
-        {
-            /// <summary>
-            /// Create JsonSerializer
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <param name="map"></param>
-            /// <returns></returns>
-            public ISerializer GetSerializer(object obj, RendererMap map)
-            {
-                var serializer = new JsonSerializer() { Map = map };
-
-                return serializer;
-            }
         }
     }
 

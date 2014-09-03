@@ -97,7 +97,6 @@
     <Compile Include="Util\RawCallDelegate.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\Serializer\ISerializer.cs" />
-    <Compile Include="Util\Serializer\ISerializerFactory.cs" />
     <Compile Include="Util\Serializer\JsonBuiltinSerializer.cs" />
     <Compile Include="Util\Serializer\JsonSerializer.cs" />
     <Compile Include="Util\TypeConverters\ArrangementConverter.cs" />

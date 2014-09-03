@@ -47,35 +47,9 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj">object to serialize</param>
         /// <returns>serialized data</returns>
-        public object Serialize(object obj)
+        public object Serialize(object obj, RendererMap map)
         {
             return BuiltinSerializer.Serialize(obj);
-        }
-
-        /// <summary>
-        /// Creates <see cref="JsonBuiltinSerializer"/>
-        /// </summary>
-        public class Factory : ISerializerFactory
-        {
-            /// <summary>
-            /// Creates <see cref="JsonBuiltinSerializer"/> with no regards to <paramref name="map"/>
-            /// </summary>
-            /// <param name="obj">object to get a serializer for</param>
-            /// <param name="map">renderer map to consider</param>
-            /// <returns>a serializer for <paramref name="obj"/></returns>
-            public ISerializer GetSerializer(object obj, RendererMap map)
-            {
-                var serializer = new JsonBuiltinSerializer();
-                /*  
-                //TODO: Consider registering RendererMap lookup with custom serializer
-                if (rendererMap.HasExtraRenderes)
-                {
-                    serializer = new JavaScriptSerializer();
-                    serializer.RegisterConverters(new JavaScriptConverter[] { new CustomJSConverter(rendererMap) });
-                }
-                */
-                return serializer;
-            }
         }
     }
 }

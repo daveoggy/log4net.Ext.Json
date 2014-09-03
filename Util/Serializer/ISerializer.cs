@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using log4net.ObjectRenderer;
 
 namespace log4net.Util.Serializer
 {
@@ -34,6 +35,6 @@ namespace log4net.Util.Serializer
         /// </summary>
         /// <param name="obj">object to serialize</param>
         /// <returns>serialized data</returns>
-        object Serialize(object obj);
+        object Serialize(object obj, RendererMap map);
     }
 }

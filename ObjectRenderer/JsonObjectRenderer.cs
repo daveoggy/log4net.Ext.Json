@@ -33,7 +33,7 @@ namespace log4net.ObjectRenderer
         /// <summary>
         /// Factory of the serializer implementation
         /// </summary>
-        public ISerializerFactory Factory { get; set; }
+        public ISerializer Serializer { get; set; }
 
         /// <summary>
         /// The bare minimal default serializer - static cache
@@ -48,19 +48,9 @@ namespace log4net.ObjectRenderer
         /// <param name="writer">Will receive the serialized data of obj</param>
         public virtual void RenderObject(RendererMap rendererMap, object obj, TextWriter writer)
         {
-            var serializer = GetSerializer(rendererMap, obj);
-            var data = serializer.Serialize(obj);
+            var serializer = Serializer ?? JsonSerializer.DefaultSerializer;
+            var data = serializer.Serialize(obj, rendererMap);
             writer.WriteLine(data);
-        }
-
-        /// <summary>
-        /// Create serializer for a specific call
-        /// </summary>
-        /// <returns>serializer instance</returns>
-        protected virtual ISerializer GetSerializer(RendererMap rendererMap, object obj)
-        {
-            var serializer = (Factory ?? JsonSerializer.DefaultSerializerFactory).GetSerializer(obj, rendererMap);
-            return serializer;
         }
 
     }
