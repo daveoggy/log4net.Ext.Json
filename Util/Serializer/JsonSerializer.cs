@@ -106,7 +106,8 @@ namespace log4net.Util.Serializer
         /// <summary>
         /// Serialize <paramref name="obj"/> to a JSON string
         /// </summary>
-        /// <param name="obj">object to serialize</param>
+		/// <param name="obj">object to serialize</param>
+		/// <param name="map">log4net renderer map</param>
         /// <returns>JSON string</returns>
         public object Serialize(object obj, RendererMap map)
         {
@@ -121,7 +122,8 @@ namespace log4net.Util.Serializer
         /// Serialize any object into a string builder
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="sb"></param>
+		/// <param name="sb"></param>
+		/// <param name="map">log4net renderer map</param>
         protected virtual void Serialize(object obj, StringBuilder sb, RendererMap map)
         {
             var serialized = SerializeNull(obj, sb) // null gate first, others do not expect nulls
@@ -223,7 +225,8 @@ namespace log4net.Util.Serializer
         /// Serialize a dictionary into a string builder
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="sb"></param>
+		/// <param name="sb"></param>
+		/// <param name="map">log4net renderer map</param>
         protected virtual bool SerializeDictionary(IDictionary obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;
@@ -253,7 +256,8 @@ namespace log4net.Util.Serializer
         /// Serialize enumerables into a string builder
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="sb"></param>
+		/// <param name="sb"></param>
+		/// <param name="map">log4net renderer map</param>
         protected virtual bool SerializeArray(IEnumerable obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;
@@ -281,7 +285,8 @@ namespace log4net.Util.Serializer
         /// Serialize an object (last resort) into a string builder
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="sb"></param>
+		/// <param name="sb"></param>
+		/// <param name="map">log4net renderer map</param>
         protected virtual bool SerializeObject(Object obj, StringBuilder sb, RendererMap map)
         {
             if (obj == null) return false;

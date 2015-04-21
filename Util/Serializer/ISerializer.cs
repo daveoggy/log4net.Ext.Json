@@ -33,7 +33,8 @@ namespace log4net.Util.Serializer
         /// <summary>
         /// Serialize object
         /// </summary>
-        /// <param name="obj">object to serialize</param>
+		/// <param name="obj">object to serialize</param>
+		/// <param name="map">log4net renderer map</param>
         /// <returns>serialized data</returns>
         object Serialize(object obj, RendererMap map);
     }

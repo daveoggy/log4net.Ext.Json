@@ -45,7 +45,8 @@ namespace log4net.Util.Serializer
         /// <summary>
         /// Serialize object using builtin JavaScriptSerializer
         /// </summary>
-        /// <param name="obj">object to serialize</param>
+		/// <param name="obj">object to serialize</param>
+		/// <param name="map">log4net renderer map</param>
         /// <returns>serialized data</returns>
         public object Serialize(object obj, RendererMap map)
         {

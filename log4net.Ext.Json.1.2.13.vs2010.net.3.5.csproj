@@ -35,7 +35,6 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
-    <OutputPath>..\..\..\build\bin\$(MSBuildProjectName)-$(Configuration)-$([System.DateTime]::Now.ToString(`yyyyMMdd`))\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
+    <OutputPath>..\..\build\debug\log4net.Ext.Json.1.2.13.net.3.5\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -52,6 +52,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
+    <OutputPath>..\..\build\release\log4net.Ext.Json.1.2.13.net.3.5\</OutputPath>
+    <DefineConstants>$(DefineConstants);NETCF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
@@ -94,7 +96,6 @@
     <Compile Include="Util\RawCallDelegate.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\Serializer\ISerializer.cs" />
-    <Compile Include="Util\Serializer\ISerializerFactory.cs" />
     <Compile Include="Util\Serializer\JsonBuiltinSerializer.cs" />
     <Compile Include="Util\Serializer\JsonSerializer.cs" />
     <Compile Include="Util\TypeConverters\ArrangementConverter.cs" />
