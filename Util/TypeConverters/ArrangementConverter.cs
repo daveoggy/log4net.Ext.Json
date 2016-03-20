@@ -267,7 +267,6 @@ namespace log4net.Util.TypeConverters
                     break;
                 case ":":
                     // just rename members
-                    var cons =
                     ar = new Member()
                     {
                         Name = name,

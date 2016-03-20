@@ -72,9 +72,6 @@ namespace log4net.Util
                     m_calls[alivecall] = MakeConfig(alivecall, interval);
                 }
 
-                // ensure we have the right repo if config changed
-                m_rep = LogManager.GetRepository(typeof(KeepAlive).Assembly);
-
                 if (!m_stop) Start();
 
                 Monitor.PulseAll(m_control_locker);
@@ -113,11 +110,6 @@ namespace log4net.Util
         /// Internal appender and config store
         /// </summary>
         readonly IDictionary<AliveCall, Config> m_calls = new Dictionary<AliveCall, Config>();
-
-        /// <summary>
-        /// Repository used for custom <see cref="LoggingEvent"/>
-        /// </summary>
-        ILoggerRepository m_rep;
 
         /// <summary>
         /// The Alive thread

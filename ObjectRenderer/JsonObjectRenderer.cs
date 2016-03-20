@@ -48,7 +48,7 @@ namespace log4net.ObjectRenderer
         /// <param name="writer">Will receive the serialized data of obj</param>
         public virtual void RenderObject(RendererMap rendererMap, object obj, TextWriter writer)
         {
-            var serializer = Serializer ?? JsonSerializer.DefaultSerializer;
+			var serializer = Serializer ?? new JsonSerializer();
             var data = serializer.Serialize(obj, rendererMap);
             writer.WriteLine(data);
         }

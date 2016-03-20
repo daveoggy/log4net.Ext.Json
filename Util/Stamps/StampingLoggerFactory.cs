@@ -68,7 +68,7 @@ namespace log4net.Util.Stamps
         /// The wrapped logger factory. 
         /// </summary>
         /// <remarks>
-        /// If empty, <see cref="DefaultLoggerFactory" /> fills the space on first use.
+		/// If empty, <see cref="log4net.Repository.Hierarchy.DefaultLoggerFactory" /> fills the space on first use.
         /// </remarks>
         public ILoggerFactory InnerFactory { get; set; }
 
@@ -166,7 +166,7 @@ namespace log4net.Util.Stamps
         #endregion
 
         /// <summary>
-        /// Get the wrapped factory, most likely <see cref="InnerFactory"/>. Set a default if empty (<see cref="DefaultLoggerFactory" />)
+		/// Get the wrapped factory, most likely <see cref="InnerFactory"/>. Set a default if empty (<see cref="log4net.Repository.Hierarchy.DefaultLoggerFactory" />)
         /// </summary>
         /// <returns></returns>
         /// <remarks>
@@ -174,7 +174,7 @@ namespace log4net.Util.Stamps
         /// Gives an inherited class a chance to override default behavior.
         /// </para>
         /// <para>
-        /// FIXME: Could we reach the <see cref="DefaultLoggerFactory" /> more easily/obviously, rather than instantiating a fake <see cref="Hierarchy"/> and fetching <see cref="Hierarchy.LoggerFactory"/>?
+		/// FIXME: Could we reach the <see cref="log4net.Repository.Hierarchy.DefaultLoggerFactory" /> more easily/obviously, rather than instantiating a fake <see cref="Hierarchy"/> and fetching <see cref="Hierarchy.LoggerFactory"/>?
         /// </para>
         /// </remarks>
         protected virtual ILoggerFactory GetFactory()

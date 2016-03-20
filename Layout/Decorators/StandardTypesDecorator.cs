@@ -290,7 +290,7 @@ namespace log4net.Layout.Decorators
 
             if (uri == null) return false;
 
-            var str = Convert.ToString(uri);
+			result = Convert.ToString(uri);
 
             return true;
         }
@@ -372,7 +372,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done</returns>
         protected virtual bool StandardObject(object obj, ref object result, IDictionary flatdict, string path = null)
         {
-            return StandardDictionary(log4net.Util.Serializer.JsonSerializer.ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName), ref result, flatdict, path);
+            return StandardDictionary(log4net.Util.Serializer.JsonHomebrewSerializer.ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName), ref result, flatdict, path);
         }
 
 

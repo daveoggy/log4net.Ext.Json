@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>log4net.Ext.Json</id>
+    <version>1.2.10.20140804</version>
+    <title>JSON for log4net [1.2.10]</title>
+    <authors>Robert Sevcik</authors>
+    <owners>Robert Sevcik</owners>
+    <licenseUrl>http://sourceforge.net/p/log4net-json/code/HEAD/tree/trunk/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt?format=raw</licenseUrl>
+    <projectUrl>http://sourceforge.net/projects/log4net-json/</projectUrl>
+    <iconUrl>http://c.fsdn.com/allura/p/log4net-json/icon</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Enable JSON logging in log4net, stamp log messages, entertain keep-alive appender</description>
+    <releaseNotes>This is a build from 2014-08-04, SVN rev 31</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>logging log tracing logfiles json log4net extension</tags>
+    <dependencies>
+      <dependency id="log4net" version="1.2.10" />
+    </dependencies>
+  </metadata>
+</package>

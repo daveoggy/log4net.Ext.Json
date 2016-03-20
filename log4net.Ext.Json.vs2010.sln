@@ -11,15 +11,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11.vs2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11.vs2010.net.2.0", "log4net.Ext.Json.1.2.11.vs2010.net.2.0.csproj", "{ACE30186-0909-49A8-8142-BC6EAD337E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.vs2010", "..\..\..\src\log4net\log4net.vs2010.csproj", "{181FE707-E161-4722-9F38-6AAAB6FAA106}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.vs2012", "..\apache-log4net\src\log4net.vs2012.csproj", "{181FE707-E161-4722-9F38-6AAAB6FAA106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0", "log4net.Ext.Json.1.3.trunk.vs2010.net.4.0.csproj", "{06A52FA9-985D-455A-A7EE-EF6179B26919}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json", "log4net.Ext.Json.csproj", "{06A52FA9-985D-455A-A7EE-EF6179B26919}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.10.vs2010.net.2.0", "log4net.Ext.Json.1.2.10.vs2010.net.2.0.csproj", "{3F99C574-3288-4E22-9736-3A08182E408E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11-oldkey.vs2010.net.2.0", "log4net.Ext.Json.1.2.11-oldkey.vs2010.net.2.0.csproj", "{27A41B35-AAE8-45F3-A3C1-01D21F4E70E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.13.vs2010.net.4.0.nuget", "log4net.Ext.Json.1.2.13.vs2010.net.4.0.nuget.csproj", "{723E806A-37FA-488F-8B36-4A7A90000440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.nuget.net.4.0", "log4net.Ext.Json.nuget.net.4.0.csproj", "{723E806A-37FA-488F-8B36-4A7A90000440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +67,13 @@ Global
 		{ACE30186-0909-49A8-8142-BC6EAD337E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACE30186-0909-49A8-8142-BC6EAD337E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACE30186-0909-49A8-8142-BC6EAD337E97}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = log4net.Ext.Json.1.2.13.vs2010.net.2.0.csproj
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$1.ResourceNamePolicy = FileFormatDefault
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

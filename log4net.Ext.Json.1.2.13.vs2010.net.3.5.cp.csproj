@@ -43,7 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
-    <OutputPath>..\..\build\debug\log4net.Ext.Json.1.2.13.net.3.5.cp\</OutputPath>
+    <OutputPath>..\build\debug\1.2.13\net35cp\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -51,13 +51,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
-    <OutputPath>..\..\build\release\log4net.Ext.Json.1.2.13.net.3.5.cp\</OutputPath>
-    <DefineConstants>$(DefineConstants);NETCF</DefineConstants>
+    <OutputPath>..\build\release\1.2.13\net35cp\</OutputPath>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="log4net">
-      <HintPath>..\..\..\lib\log4net\1.2.13\net-cp\3.5\release\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a">
+      <HintPath>..\lib\log4net\1.2.13\net-cp\3.5\release\log4net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -94,13 +94,14 @@
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\Serializer\ISerializer.cs" />
     <Compile Include="Util\Serializer\JsonBuiltinSerializer.cs" />
-    <Compile Include="Util\Serializer\JsonSerializer.cs" />
     <Compile Include="Util\TypeConverters\ArrangementConverter.cs" />
     <Compile Include="Layout\Arrangements\IArrangement.cs" />
     <Compile Include="Layout\Members\IMember.cs" />
     <Compile Include="ObjectRenderer\JsonObjectRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\TypeConverters\LayoutConverter.cs" />
+    <Compile Include="Util\Serializer\JsonHomebrewSerializer.cs" />
+    <Compile Include="Util\Serializer\JsonSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="log4net.Ext.Json.LICENSE.txt">
