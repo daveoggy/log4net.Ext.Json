@@ -2,7 +2,7 @@
 title: JSON extension for log4net (log4net.Ext.Json)
 email: ""
 description: "Enable json logging in log4net and a bit more."
-baseurl: ""
+baseurl: "https://robajz.github.io/log4net.Ext.Json/"
 url: "https://robajz.github.io/log4net.Ext.Json/"
 twitter_username: rbjz
 github_username:  robajz
