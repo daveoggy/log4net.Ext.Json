@@ -34,7 +34,13 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <!--v2.0, v3.0, v3.5, v4.0, v4.5, and v4.5.1-->
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkProfile)' != '' ">$(DefineConstants);CLIENT_PROFILE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetCompactFramework)' != '' ">$(DefineConstants);NETCF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -121,13 +127,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <!--v2.0, v3.0, v3.5, v4.0, v4.5, and v4.5.1-->
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkProfile)' != '' ">$(DefineConstants);CLIENT_PROFILE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetCompactFramework)' != '' ">$(DefineConstants);NETCF</DefineConstants>
-  </PropertyGroup>
 </Project>

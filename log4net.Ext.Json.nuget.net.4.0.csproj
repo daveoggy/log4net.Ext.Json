@@ -33,7 +33,15 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <DefineConstants>$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <!--v2.0, v3.0, v3.5, v4.0, v4.5, and v4.5.1-->
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetFrameworkProfile)' != '' ">$(DefineConstants);CLIENT_PROFILE</DefineConstants>
+    <DefineConstants Condition=" '$(TargetCompactFramework)' != '' ">$(DefineConstants);NETCF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
     <OutputPath>..\build\debug\nuget\net40\</OutputPath>
-    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -112,25 +120,7 @@
     <EmbeddedResource Include="log4net.Ext.Json.README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="log4net.Ext.Json.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <!--v2.0, v3.0, v3.5, v4.0, v4.5, and v4.5.1-->
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetFrameworkProfile)' != '' ">$(DefineConstants);CLIENT_PROFILE</DefineConstants>
-    <DefineConstants Condition=" '$(TargetCompactFramework)' != '' ">$(DefineConstants);NETCF</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="log4net.Ext.Json.nuspec" />
-  </ItemGroup>
 </Project>
