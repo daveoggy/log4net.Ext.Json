@@ -27,9 +27,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("log4net.Ext.Json")]
 [assembly: AssemblyDescription("Enable JSON logging in log4net")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Robert Sevcik")]
+[assembly: AssemblyCompany("Robert Cutajar")]
 [assembly: AssemblyProduct("log4net.Ext.Json")]
-[assembly: AssemblyCopyright("Copyright © Robert Sevcik 2014")]
+[assembly: AssemblyCopyright("Copyright © Robert Cutajar 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.13.29")]
-[assembly: AssemblyFileVersion("1.2.13.29")]
+[assembly: AssemblyVersion("1.2.15.*")]
+[assembly: AssemblyFileVersion("1.2.15.1")]

@@ -19,12 +19,13 @@
     </dependencies>
   </metadata>
 	<files>
-	    <file src="bin\release\nuget\v2.0\log4net.Ext.Json.*" target="lib\net20" />
-	    <file src="bin\release\nuget\v3.0\log4net.Ext.Json.*" target="lib\net30" />
-	    <file src="bin\release\nuget\v3.5\log4net.Ext.Json.*" target="lib\net35" />
-	    <file src="bin\release\nuget\v3.5Client\log4net.Ext.Json.*" target="lib\net35cp" />
-	    <file src="bin\release\nuget\v4.0\log4net.Ext.Json.*" target="lib\net40" />
-	    <file src="bin\release\nuget\v4.0Client\log4net.Ext.Json.*" target="lib\net40" />
-	    <file src="bin\release\nuget\v4.5\log4net.Ext.Json.*" target="lib\net45" />
+	    <file src="bin/release/nuget/v2.0/log4net.Ext.Json.dll" target="lib/net20-full" />
+	    <file src="bin/release/nuget/v3.0/log4net.Ext.Json.dll" target="lib/net30-full" />
+	    <file src="bin/release/nuget/v3.5/log4net.Ext.Json.dll" target="lib/net35-full" />
+	    <file src="bin/release/nuget/v3.5Client/log4net.Ext.Json.dll" target="lib/net35-client" />
+	    <file src="bin/release/nuget/v4.0/log4net.Ext.Json.dll" target="lib/net40-full" />
+	    <file src="bin/release/nuget/v4.0Client/log4net.Ext.Json.dll" target="lib/net40-client" />
+	    <file src="bin/release/nuget/v4.5/log4net.Ext.Json.dll" target="lib/net45-full" />
+	    <file src="*.txt" target="content" />
 	</files>
 </package>
