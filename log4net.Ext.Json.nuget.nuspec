@@ -2,20 +2,29 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>log4net.Ext.Json</id>
-    <version>1.2.10.20140804</version>
-    <title>JSON for log4net [1.2.10]</title>
-    <authors>Robert Sevcik</authors>
-    <owners>Robert Sevcik</owners>
-    <licenseUrl>http://sourceforge.net/p/log4net-json/code/HEAD/tree/trunk/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt?format=raw</licenseUrl>
-    <projectUrl>http://sourceforge.net/projects/log4net-json/</projectUrl>
-    <iconUrl>http://c.fsdn.com/allura/p/log4net-json/icon</iconUrl>
+    <version>1.2.15.20160320</version>
+    <title>JSON for log4net [1.2.15]</title>
+    <authors>Robert Cutajar</authors>
+    <owners>Robert Cutajar</owners>
+    <licenseUrl>https://raw.githubusercontent.com/robajz/log4net.Ext.Json/master/log4net.Ext.Json.LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/robajz/log4net.Ext.Json</projectUrl>
+    <iconUrl>https://robajz.github.io/log4net.Ext.Json/css/img/icon.gif</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Enable JSON logging in log4net, stamp log messages, entertain keep-alive appender</description>
-    <releaseNotes>This is a build from 2014-08-04, SVN rev 31</releaseNotes>
+    <releaseNotes>This is a build from 2016-03-20, GIT commit a1ea5cdd</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>logging log tracing logfiles json log4net extension</tags>
     <dependencies>
-      <dependency id="log4net" version="1.2.10" />
+      <dependency id="log4net" version="2.0.5" />
     </dependencies>
   </metadata>
+	<files>
+	    <file src="build\release\nuget\v2.0\log4net.Ext.Json.*" target="lib\net20" />
+	    <file src="build\release\nuget\v3.0\log4net.Ext.Json.*" target="lib\net30" />
+	    <file src="build\release\nuget\v3.5\log4net.Ext.Json.*" target="lib\net35" />
+	    <file src="build\release\nuget\v3.5Client\log4net.Ext.Json.*" target="lib\net35cp" />
+	    <file src="build\release\nuget\v4.0\log4net.Ext.Json.*" target="lib\net40" />
+	    <file src="build\release\nuget\v4.0Client\log4net.Ext.Json.*" target="lib\net40" />
+	    <file src="build\release\nuget\v4.5\log4net.Ext.Json.*" target="lib\net45" />
+	</files>
 </package>

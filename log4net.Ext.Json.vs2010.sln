@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.10.vs2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.1.2.11-oldkey.vs2010.net.2.0", "log4net.Ext.Json.1.2.11-oldkey.vs2010.net.2.0.csproj", "{27A41B35-AAE8-45F3-A3C1-01D21F4E70E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.nuget.net.4.0", "log4net.Ext.Json.nuget.net.4.0.csproj", "{723E806A-37FA-488F-8B36-4A7A90000440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.nuget", "log4net.Ext.Json.nuget.csproj", "{723E806A-37FA-488F-8B36-4A7A90000440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

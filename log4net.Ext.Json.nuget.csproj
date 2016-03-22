@@ -31,10 +31,7 @@
     <RootNamespace>log4net</RootNamespace>
     <AssemblyName>log4net.Ext.Json</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <DefineConstants>$(DefineConstants)</DefineConstants>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <!--v2.0, v3.0, v3.5, v4.0, v4.5, and v4.5.1-->
     <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5.1' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
     <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
@@ -42,6 +39,7 @@
     <DefineConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">$(DefineConstants);FRAMEWORK_3_5_OR_ABOVE</DefineConstants>
     <DefineConstants Condition=" '$(TargetFrameworkProfile)' != '' ">$(DefineConstants);CLIENT_PROFILE</DefineConstants>
     <DefineConstants Condition=" '$(TargetCompactFramework)' != '' ">$(DefineConstants);NETCF</DefineConstants>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,7 +48,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
-    <OutputPath>..\build\debug\nuget\net40\</OutputPath>
+    <OutputPath>..\build\debug\nuget\$(TargetFrameworkVersion)$(TargetFrameworkProfile)\</OutputPath>
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -59,7 +57,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
-    <OutputPath>..\build\release\nuget\net40\</OutputPath>
+    <OutputPath>..\build\release\nuget\$(TargetFrameworkVersion)$(TargetFrameworkProfile)\</OutputPath>
     <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
