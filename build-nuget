@@ -1,11 +1,13 @@
 #!/bin/bash
 
-log4netversion=$(grep  "log4net, Version" log4net.Ext.Json.nuget.csproj | sed -re 's/.* Version=([0-9.]*).*/\1/')
+epoch=$(date +%s)
+builddate=$(date +%Y-%m-%d)
 log4netnuget=$(grep "log4net" packages.config | sed -re 's/.* version="([^"]*)".*/\1/')
+log4netversion=$(grep  "log4net, Version" log4net.Ext.Json.nuget.csproj | sed -re 's/.* Version=([0-9]+\.[0-9]+\.[0-9]+)\..*/\1/')
+log4netversion="$log4netversion.$epoch"
 gitbranch=$(git symbolic-ref --short -q HEAD)
 gitcommit=$(git rev-parse HEAD)
 gitstatus=$(git status -s)
-builddate=$(date +%Y-%m-%d)
 
 if [[ ! -z $gitstatus ]] ; then
 	echo "Working dir not in order, quitting:"
