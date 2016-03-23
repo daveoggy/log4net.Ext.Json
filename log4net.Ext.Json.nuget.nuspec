@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>log4net.Ext.Json</id>
-    <version>1.2.15.20160322</version>
-    <title>JSON for log4net [1.2.15]</title>
+    <version>1.2.15.0</version>
+    <title>JSON extension for log4net</title>
     <authors>Robert Cutajar</authors>
     <owners>Robert Cutajar</owners>
     <licenseUrl>https://raw.githubusercontent.com/robajz/log4net.Ext.Json/master/log4net.Ext.Json.LICENSE.txt</licenseUrl>

@@ -13,6 +13,9 @@ if [[ ! -z $gitstatus ]] ; then
 fi
 
 build () {
+
+	echo "$@"
+
 	netverson="$1"
 	profile="$2"
 
