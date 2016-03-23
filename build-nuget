@@ -2,6 +2,7 @@
 
 log4netversion=$(grep  "log4net, Version" log4net.Ext.Json.nuget.csproj | sed -re 's/.* Version=([0-9.]*).*/\1/')
 log4netnuget=$(grep "log4net" packages.config | sed -re 's/.* version="([^"]*)".*/\1/')
+gitbranch=$(git symbolic-ref --short -q HEAD)
 gitcommit=$(git rev-parse HEAD)
 gitstatus=$(git status -s)
 builddate=$(date +%Y-%m-%d)
@@ -18,7 +19,7 @@ build () {
 
 	conf="Built on $builddate against log4net v $log4netversion nuget v $log4netnuget"
 	conf="$conf with .net framework $netversion $profile"
-	conf="$conf off of git commit $gitcommit"
+	conf="$conf off of git $gitbranch $gitcommit"
 
 	sed -f - -i Properties/AssemblyInfo.cs <<-EOSED
 		s/AssemblyConfiguration("[^"]*")/AssemblyConfiguration("$conf")/
