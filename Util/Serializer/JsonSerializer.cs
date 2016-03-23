@@ -3,7 +3,7 @@
 namespace log4net.Util.Serializer
 {
 
-	#if FRAMEWORK_3_5_OR_ABOVE && !CLIENT_PROFILE && !NETCF
+	#if !NONETJSON
 	/// <summary>
 	/// Json serializer based on framework builtin.
 	/// </summary>
