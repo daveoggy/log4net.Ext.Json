@@ -12,9 +12,9 @@ if [[ ! -z $gitstatus ]] ; then
 	exit 1
 fi
 
-function build {
-	netverson="@1"
-	profile="@2"
+build () {
+	netverson="$1"
+	profile="$2"
 
 	conf="Built on $builddate against log4net v $log4netversion nuget v $log4netnuget"
 	conf="$conf with .net framework $netversion $profile"
