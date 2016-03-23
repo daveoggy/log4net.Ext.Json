@@ -13,10 +13,10 @@ if [[ ! -z $gitstatus ]] ; then
 fi
 
 function build {
-	netverson="$1"
-	profile="$2"
+	netverson="@1"
+	profile="@2"
 
-	conf="Built on $builddate against log4net v $log4netversion nuget v $log4nenuget"
+	conf="Built on $builddate against log4net v $log4netversion nuget v $log4netnuget"
 	conf="$conf with .net framework $netversion $profile"
 	conf="$conf off of git commit $gitcommit"
 
