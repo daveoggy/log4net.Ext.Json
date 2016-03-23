@@ -32,18 +32,18 @@ build () {
 		log4net.Ext.Json.nuget.csproj
 }
 
-build "v2.0" ""
-build "v3.0" ""
-build "v3.5" ""
+build "v2.0"
+build "v3.0"
+build "v3.5"
 build "v3.5" "Client"
-build "v4.0" ""
+build "v4.0"
 build "v4.0" "Client"
-build "v4.5" ""
+build "v4.5"
 
 sed -rf - -i log4net.Ext.Json.nuget.nuspec <<-EOSED
 	s/\d\d\d\d-\d\d-\d\d/$builddate/
 	s/[a-fA-F0-9]{8,64}/$gitcommit/
-	s/<version>[0-9.]+<\/version>/<version>$log4netversion</version>/
+	s/<version>[0-9.]+<\/version>/<version>$log4netversion<\/version>/
 	s/id="log4net" version="[0-9.]+"/id="log4net" version="$log4netnuget"/
 EOSED
 
