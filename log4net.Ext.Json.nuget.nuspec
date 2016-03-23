@@ -11,7 +11,7 @@
     <iconUrl>https://robajz.github.io/log4net.Ext.Json/css/img/icon.gif</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Enable JSON logging in log4net, stamp log messages, entertain keep-alive appender</description>
-    <releaseNotes>This is a build from 2016-03-22, GIT commit 04df5126f21b1e40773f0b4b3238a5b8a38d99b7</releaseNotes>
+    <releaseNotes>This is a build from 2016-03-22, GIT commit 376201d7acc3a9e84309685ad2c0ee3ffa6270ff</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>logging log tracing logfiles json log4net extension</tags>
     <dependencies>

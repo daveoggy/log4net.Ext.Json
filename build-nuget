@@ -13,10 +13,7 @@ if [[ ! -z $gitstatus ]] ; then
 fi
 
 build () {
-
-	echo "$@"
-
-	netverson="$1"
+	netversion="$1"
 	profile="$2"
 
 	conf="Built on $builddate against log4net v $log4netversion nuget v $log4netnuget"

@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("log4net.Ext.Json")]
 [assembly: AssemblyDescription("Enable JSON logging in log4net")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("Built on 2016-03-23 against log4net v 1.2.15.0 nuget v 2.0.5 with .net framework   off of git commit 376201d7acc3a9e84309685ad2c0ee3ffa6270ff")]
 [assembly: AssemblyCompany("Robert Cutajar")]
 [assembly: AssemblyProduct("log4net.Ext.Json")]
 [assembly: AssemblyCopyright("Copyright © Robert Cutajar 2016")]
@@ -52,4 +52,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.2.15.*")]
-[assembly: AssemblyFileVersion("1.2.15.1")]
+[assembly: AssemblyFileVersion("1.2.15.0")]
