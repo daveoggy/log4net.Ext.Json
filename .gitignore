@@ -1,6 +1,7 @@
 *.suo
 *.user
 *.userprefs
+*.nupkg
 bin
 obj
 packages
