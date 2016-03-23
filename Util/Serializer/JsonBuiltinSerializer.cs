@@ -17,7 +17,7 @@
 //
 #endregion
 
-#if FRAMEWORK_3_5_OR_ABOVE && !CLIENT_PROFILE && !NETCF
+#if !NONETJSON
 
 using System;
 using System.Collections.Generic;

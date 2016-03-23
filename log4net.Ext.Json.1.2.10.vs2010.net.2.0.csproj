@@ -52,7 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
-    <DefineConstants>TRACE;LOG4NET_1_2_10_COMPATIBLE</DefineConstants>
+    <DefineConstants>TRACE;LOG4NET_1_2_10_COMPATIBLE;NONETJSON</DefineConstants>
     <OutputPath>..\build\release\1.2.10\net20\</OutputPath>
   </PropertyGroup>
   <ItemGroup>

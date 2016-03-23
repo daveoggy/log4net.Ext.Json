@@ -59,7 +59,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>log4net.Ext.Json.xml</DocumentationFile>
     <OutputPath>..\build\release\1.2.13\net20\</OutputPath>
-    <DefineConstants>$(DefineConstants);</DefineConstants>
+    <DefineConstants>$(DefineConstants);NONETJSON</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
