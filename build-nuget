@@ -49,3 +49,5 @@ sed -rf - -i log4net.Ext.Json.nuget.nuspec <<-EOSED
 EOSED
 
 mono ../lib/nuget.exe pack log4net.Ext.Json.nuget.nuspec
+
+git checkout log4net.Ext.Json.nuget.nuspec Properties/AssemblyInfo.cs
