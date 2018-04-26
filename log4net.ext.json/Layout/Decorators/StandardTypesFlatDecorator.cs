@@ -67,7 +67,7 @@ namespace log4net.Layout.Decorators
                             : String.Format("{0}.{1}", path, entry.Key)
                             ;
 
-                if (entry.Value == null || DBNull.Value.Equals(entry.Value))
+                if (entry.Value == null)
                 {
                     // ignore nulls
                 }

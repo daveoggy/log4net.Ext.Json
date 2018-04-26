@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>log4net</RootNamespace>
+    <AssemblyName>log4net.ext.json</AssemblyName>
+    <TargetFrameworks>netstandard1.3;net45;net40;net35;net20;</TargetFrameworks>
+    <PackageId>log4net.Ext.Json</PackageId>
+    <PackOnBuild>true</PackOnBuild>
+    <Authors>Robert Cutajar</Authors>
+    <Owners>Robert Cutajar</Owners>
+    <Copyright>Copyright (c) 2018 Robert Cutajar</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageProjectUrl>https://github.com/BrightOpen/log4net.Ext.Json</PackageProjectUrl>
+    <Title>log4net.ext.json</Title>
+    <Summary>Enable JSON logging in log4net</Summary>
+    <Description>Enable JSON logging in log4net.</Description>
+    <PackageTags>logging json</PackageTags>
+    <Version>2.0.8.1</Version>
+    <FileVersion>2.0.8.1</FileVersion>
+    <ReleaseVersion>2.0.8.1</ReleaseVersion>
+    <PackageIconUrl>https://robajz.github.io/log4net.Ext.Json/css/img/icon.gif</PackageIconUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/BrightOpen/log4net.Ext.Json/master/log4net.Ext.Json.LICENSE.txt</PackageLicenseUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net40' OR '$(TargetFramework)'=='net35' OR '$(TargetFramework)'=='net20'">
+    <DefineConstants>Net20Reflection</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net40' OR '$(TargetFramework)'=='net35' OR '$(TargetFramework)'=='net20'">
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="log4net.ext.json.LICENSE.txt" />
+    <None Remove="log4net.ext.json.README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="log4net.ext.json.LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="log4net.ext.json.README.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

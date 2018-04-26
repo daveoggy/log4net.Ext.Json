@@ -132,7 +132,6 @@ namespace log4net.Util
                 {
                     m_thread = new Thread(Run);
                     m_thread.Name = String.Format("{0}-{1}", typeof(KeepAlive).Name, m_thread.ManagedThreadId);
-                    m_thread.Priority = ThreadPriority.Lowest;
                     m_thread.IsBackground = true;
                     m_thread.Start();
                 }
@@ -153,10 +152,7 @@ namespace log4net.Util
 
             if (m_thread != null && m_thread.IsAlive)
             {
-                m_thread.Priority = ThreadPriority.AboveNormal;
-
-                if (!m_thread.Join(1000))
-                    m_thread.Abort();
+				m_thread.Join();
             }
         }
 
@@ -188,14 +184,6 @@ namespace log4net.Util
                         Monitor.PulseAll(m_control_locker);
                     }
                 }
-            }
-            catch (ThreadAbortException tax)
-            {
-#if LOG4NET_1_2_10_COMPATIBLE
-                LogLog.Error("Alive.Run() aborted.", tax);
-#else
-                LogLog.Error(GetType(), "Alive.Run() aborted.", tax);
-#endif
             }
             catch (Exception x)
             {

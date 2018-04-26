@@ -46,7 +46,7 @@ namespace log4net.ObjectRenderer
         /// <param name="rendererMap">The map used to lookup renderers</param>
         /// <param name="obj">Object to be serialized</param>
         /// <param name="writer">Will receive the serialized data of obj</param>
-        public virtual void RenderObject(RendererMap rendererMap, object obj, TextWriter writer)
+        void IObjectRenderer.RenderObject(RendererMap rendererMap, object obj, TextWriter writer)
         {
 			var serializer = Serializer ?? new JsonSerializer();
             var data = serializer.Serialize(obj, rendererMap);

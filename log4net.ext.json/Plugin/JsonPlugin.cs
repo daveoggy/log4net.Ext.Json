@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 using log4net.Appender;
 using log4net.Layout;
 using log4net.Layout.Pattern;
@@ -128,9 +129,9 @@ namespace log4net.Plugin
                 }
                 else
                 {
-                    var prop = appender.GetType().GetProperty("Layout");
+					var prop = appender.GetType().GetProperty("Layout");
                     if (prop != null
-                        && typeof(ILayout).IsAssignableFrom(prop.PropertyType)
+					    && typeof(ILayout).IsAssignableFrom(prop.PropertyType)
                         && prop.GetIndexParameters().Length == 0)
                     {
                         var anylayout = prop.GetValue(appender, null);

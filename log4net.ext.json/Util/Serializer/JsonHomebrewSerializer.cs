@@ -23,6 +23,7 @@ using System.Text;
 using log4net.ObjectRenderer;
 using System.Collections.Generic;
 using System.Reflection;
+using log4net.Util;
 
 namespace log4net.Util.Serializer
 {
@@ -144,7 +145,7 @@ namespace log4net.Util.Serializer
         /// <param name="sb"></param>
         protected virtual bool SerializeNull(object obj, StringBuilder sb)
         {
-            if (obj != null && !DBNull.Value.Equals(obj)) return false;
+			if (obj != null) return false;
             sb.Append("null");
             return true;
         }
@@ -203,7 +204,7 @@ namespace log4net.Util.Serializer
                     sb.Append(true.Equals(obj) ? "true" : "false");
                     break;
                 default:
-                    if (!t.IsPrimitive)
+                    if (!t.GetTypeInfo().IsPrimitive)
                         return false;
                     else
                         sb.Append(obj);
@@ -399,7 +400,7 @@ namespace log4net.Util.Serializer
         protected virtual bool SerializeEnum(object obj, StringBuilder sb)
         {
             if (obj == null) return false;
-            if (!obj.GetType().IsEnum) return false;
+			if (!obj.GetType().GetTypeInfo().IsEnum) return false;
 
             var str = Convert.ToString(obj);
 
@@ -421,8 +422,6 @@ namespace log4net.Util.Serializer
 
             var flags = BindingFlags.Instance
                         | BindingFlags.Public
-                        | BindingFlags.GetField
-                        | BindingFlags.GetProperty
                         ;
 
             var type = obj.GetType();
@@ -440,7 +439,7 @@ namespace log4net.Util.Serializer
                 dict[prop.Name] = prop.GetValue(obj, null);
             }
 
-            if (true.Equals(saveType) || (saveType == null && type.IsVisible))
+			if (true.Equals(saveType) || (saveType == null && type.GetTypeInfo().IsVisible))
                 dict[typeMemberName] = type.FullName;
 
             if (true.Equals(stringify))

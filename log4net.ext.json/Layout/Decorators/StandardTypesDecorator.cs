@@ -100,7 +100,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done</returns>
         protected virtual bool StandardNull(object obj, ref object result)
         {
-            return (obj == null || DBNull.Value.Equals(obj));
+            return obj == null;
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace log4net.Layout.Decorators
             var ms = obj as System.IO.MemoryStream;
             if (ms != null)
             {
-                result = Encoding.UTF8.GetString(ms.GetBuffer());
+				result = Encoding.UTF8.GetString(ms.ToArray());
                 return true;
             }
 
@@ -237,7 +237,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done - it's a primitive or decimal</returns>
         protected virtual bool StandardPrimitive(object obj, ref object result)
         {
-            var t = obj.GetType();
+			var t = obj.GetType().GetTypeInfo();
 
             if (t.IsPrimitive || obj is decimal)
             {
@@ -272,7 +272,7 @@ namespace log4net.Layout.Decorators
         protected virtual bool StandardEnum(object obj, ref object result)
         {
             if (obj == null) return false;
-            if (!obj.GetType().IsEnum) return false;
+			if (!obj.GetType().GetTypeInfo().IsEnum) return false;
 
             result = Convert.ToString(obj);
             return true;

@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using log4net.Core;
 
@@ -31,17 +32,16 @@ namespace log4net.Util.Stamps
     /// <author>Robert Sevcik</author>
     public class Stamp : IStamp
     {
-        /// <summary>
-        /// Property name to set
-        /// </summary>
-        public virtual String Name { get; set; }
+		/// <summary>
+		/// Property name to set
+		/// </summary>
+		public virtual String Name { get; set; } = "stamp";
 
         /// <summary>
         /// A universal stamp with name "stamp"
         /// </summary>
         public Stamp()
         {
-            Name = "stamp";
         }
 
         /// <summary>
@@ -79,9 +79,10 @@ namespace log4net.Util.Stamps
             var seq = GetSequence();
             var pid = GetProcessId();
 
+            // TODO: todo_2.0 add missing values - removed for compatibility with net standard
             return String.Format(
                 "{0};{1};{2};{3};{4};{5}"
-                , Environment.MachineName
+				, "todo_2.0" //Environment.MachineName
                 , tSys
                 , tApp
                 , tNow
@@ -105,7 +106,7 @@ namespace log4net.Util.Stamps
 
             if (value == null) return null;
 
-            if (!(value is string || value.GetType().IsPrimitive))
+            if (!(value is string || value.GetType().GetTypeInfo().IsPrimitive))
                 value = loggingEvent.Repository.RendererMap.FindAndRender(value);
 
             return value;
