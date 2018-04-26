@@ -2,6 +2,10 @@
 
 namespace log4net.Util.Serializer
 {
-    public class JsonSerializer : JsonHomebrewSerializer { }
+#if JsonBuiltinSerializer
+    public class JsonSerializer : JsonBuiltinSerializer { }
+#else
+	public class JsonSerializer : JsonHomebrewSerializer { }
+#endif
 }
 
