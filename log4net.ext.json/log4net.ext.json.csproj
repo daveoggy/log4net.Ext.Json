@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>log4net</RootNamespace>
     <AssemblyName>log4net.ext.json</AssemblyName>
-    <TargetFrameworks>netstandard1.3;net45;net40;net35;net20;</TargetFrameworks>
+    <TargetFrameworks>net45;net40;net35;net20;netstandard1.3</TargetFrameworks>
     <PackageId>log4net.Ext.Json</PackageId>
     <PackOnBuild>true</PackOnBuild>
     <Authors>Robert Cutajar</Authors>
@@ -43,4 +43,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <Target Name="test">
+  </Target>
 </Project>

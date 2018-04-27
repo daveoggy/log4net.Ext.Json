@@ -1,2 +1,2 @@
 #!/bin/sh
-msbuild /t:restore,build,pack /p:Configuration=Release
+msbuild /t:restore,build,test,pack /p:Configuration=Release
