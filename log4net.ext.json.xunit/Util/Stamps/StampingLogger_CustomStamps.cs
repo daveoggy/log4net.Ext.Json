@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Xunit;
 using Assert=NUnit.Framework.Assert;
-using log4net.ext.json.xunit.General;
+using log4net.Ext.Json.Xunit.General;
 
-namespace log4net.ext.json.xunit.Util.Stamps
+namespace log4net.Ext.Json.Xunit.Util.Stamps
 {
     public class StampingLogger_CustomStamps : RepoTest
     {

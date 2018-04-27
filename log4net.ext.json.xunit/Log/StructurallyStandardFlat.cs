@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using log4net.ext.json.xunit.General;
+using log4net.Ext.Json.Xunit.General;
 using Xunit;
 using Assert=NUnit.Framework.Assert;
 using StringAssert=NUnit.Framework.StringAssert;
 using log4net.Core;
 using System.Collections;
 
-namespace log4net.ext.json.xunit.Log
+namespace log4net.Ext.Json.Xunit.Log
 {
     public class StructurallyStandardFlat : RepoTest
     {
@@ -21,7 +21,7 @@ namespace log4net.ext.json.xunit.Log
                           <appender-ref ref='TestAppender'/>
                         </root>
 
-                        <appender name='TestAppender' type='log4net.ext.json.xunit.General.TestAppender, log4net.ext.json.xunit'>
+                        <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
                             <decorator type='log4net.Layout.Decorators.StandardTypesFlatDecorator, log4net.Ext.Json' />
                             <default />

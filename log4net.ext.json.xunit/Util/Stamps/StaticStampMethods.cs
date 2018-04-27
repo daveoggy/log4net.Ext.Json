@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 
-namespace log4net.ext.json.xunit.Util.Stamps
+namespace log4net.Ext.Json.Xunit.Util.Stamps
 {
     public class StaticStampMethods
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace log4net.ext.json.xunit.General
+namespace log4net.Ext.Json.Xunit.General
 {
     public class TestAppender : log4net.Appender.IAppender
     {

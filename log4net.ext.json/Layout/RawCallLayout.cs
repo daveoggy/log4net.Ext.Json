@@ -85,13 +85,12 @@ namespace log4net.Layout
         /// <param name="calls">calls to be searched</param>
         /// <returns>call found</returns>
         public static RawCallLayout FindLayout(string name, IEnumerable<RawCallLayout> calls)
-        {
+		{
             foreach (var cl in calls)
             {
-				if (cl.Name.Equals(name, StringComparison.Ordinal)
-                        || cl.Name.Length != 1
-				        && cl.Name.Equals(name, StringComparison.Ordinal)
-                    ) return cl;
+				if (cl.Name.Length > 1
+				   && string.Compare(cl.Name, name, true) == 0
+				   || string.Compare(cl.Name, name, false) == 0) return cl;
             }
             return null;
         }
@@ -157,12 +156,10 @@ namespace log4net.Layout
 
             RawCallLayout.AddCalls(ref calls, e => e.LookupProperty("NDC"), "ndc", "x");
             RawCallLayout.AddCalls(ref calls, e => e.Domain, "appdomain", "a");
-
-			// TODO: todo_2.0 add missing values - removed for compatibility with net standard
-
+         
 			if (s_webappname == null)
             {
-                RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /* Environment.CommandLine */, "apppath" /*custom*/);
+                RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine , "apppath" /*custom*/);
                 RawCallLayout.AddCalls(ref calls, e => e.Domain, "appname" /*custom*/);
             }
             else
@@ -179,13 +176,11 @@ namespace log4net.Layout
             RawCallLayout.AddCalls(ref calls, e => (e.TimeStamp - LoggingEvent.StartTime).TotalMilliseconds, "timestamp", "r");
             RawCallLayout.AddCalls(ref calls, e => Environment.NewLine, "newline", "n");
             RawCallLayout.AddCalls(ref calls, e => s_processId, "processid"/*custom*/, "pid"/*custom*/);
-			RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /*Environment.MachineName */, "hostname"/*custom*/, "h"/*custom*/);
-			RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /*Environment.CommandLine */, "commandline"/*custom*/);
+			RawCallLayout.AddCalls(ref calls, e => Environment.MachineName , "hostname"/*custom*/, "h"/*custom*/);
+			RawCallLayout.AddCalls(ref calls, e => Environment.CommandLine , "commandline"/*custom*/);
 			RawCallLayout.AddCalls(ref calls, e => e.UserName , "user"/*custom*/);
-			RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /*Environment.UserDomainName */, "domain"/*custom*/);
-			RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /*Environment.WorkingSet */, "memory"/*custom*/);
-
-			RawCallLayout.AddCalls(ref calls, e => "todo_2.0" /*Environment.WorkingSet */, "memory"/*custom*/);
+			RawCallLayout.AddCalls(ref calls, e => Environment.UserDomainName , "domain"/*custom*/);
+			RawCallLayout.AddCalls(ref calls, e => Environment.WorkingSet , "memory"/*custom*/);
 
             return calls;
         }

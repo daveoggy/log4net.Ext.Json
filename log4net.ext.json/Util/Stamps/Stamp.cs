@@ -79,10 +79,9 @@ namespace log4net.Util.Stamps
             var seq = GetSequence();
             var pid = GetProcessId();
 
-            // TODO: todo_2.0 add missing values - removed for compatibility with net standard
             return String.Format(
                 "{0};{1};{2};{3};{4};{5}"
-				, "todo_2.0" //Environment.MachineName
+				, Environment.MachineName
                 , tSys
                 , tApp
                 , tNow

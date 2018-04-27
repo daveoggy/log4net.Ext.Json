@@ -145,7 +145,7 @@ namespace log4net.Util.Serializer
         /// <param name="sb"></param>
         protected virtual bool SerializeNull(object obj, StringBuilder sb)
         {
-			if (obj != null) return false;
+			if (obj != null && !DBNull.Value.Equals(obj)) return false;
             sb.Append("null");
             return true;
         }

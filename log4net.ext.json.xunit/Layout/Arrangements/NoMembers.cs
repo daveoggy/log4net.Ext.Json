@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using log4net.ext.json.xunit.General;
+using log4net.Ext.Json.Xunit.General;
 using Xunit;
 
-namespace log4net.ext.json.xunit.Layout.Arrangements
+namespace log4net.Ext.Json.Xunit.Layout.Arrangements
 {
     public class NoMembers : RepoTest
     {
@@ -17,7 +17,7 @@ namespace log4net.ext.json.xunit.Layout.Arrangements
                           <appender-ref ref='TestAppender'/>
                         </root>
 
-                        <appender name='TestAppender' type='log4net.ext.json.xunit.General.TestAppender, log4net.ext.json.xunit'>
+                        <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
                             <remove />
                           </layout>

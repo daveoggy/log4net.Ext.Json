@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>log4net</RootNamespace>
-    <AssemblyName>log4net.ext.json</AssemblyName>
+    <AssemblyName>log4net.Ext.Json</AssemblyName>
     <TargetFrameworks>net45;net40;net35;net20;netstandard1.3</TargetFrameworks>
     <PackageId>log4net.Ext.Json</PackageId>
     <PackOnBuild>true</PackOnBuild>
@@ -36,10 +36,10 @@
     <None Remove="log4net.ext.json.README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="log4net.ext.json.LICENSE.txt">
+    <Content Include="log4net.Ext.Json.LICENSE.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="log4net.ext.json.README.txt">
+    <Content Include="log4net.Ext.Json.README.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using log4net.ext.json.xunit.General;
+using log4net.Ext.Json.Xunit.General;
 using Xunit;
 using Assert=NUnit.Framework.Assert;
 using StringAssert=NUnit.Framework.StringAssert;
 using Is=NUnit.Framework.Is;
 using System.Diagnostics;
 
-namespace log4net.ext.json.xunit.Layout.Arrangements
+namespace log4net.Ext.Json.Xunit.Layout.Arrangements
 {
     public class Members : RepoTest
     {
@@ -21,7 +21,7 @@ namespace log4net.ext.json.xunit.Layout.Arrangements
                           <appender-ref ref='TestAppender'/>
                         </root>
 
-                        <appender name='TestAppender' type='log4net.ext.json.xunit.General.TestAppender, log4net.ext.json.xunit'>
+                        <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
                             <member value='OurCompany.ApplicationName' /> <!-- ref to property -->
                             <member value='A|L-%p-%c' /> <!-- (|) arbitrary pattern layout format -->
@@ -53,7 +53,7 @@ namespace log4net.ext.json.xunit.Layout.Arrangements
             StringAssert.Contains(@",""Host"":{", le, "log line");
             StringAssert.Contains(@"""ProcessId"":" + procid, le, "log line");
             StringAssert.Contains(@"""HostName"":""" + Environment.MachineName + @"""", le, "log line");
-            StringAssert.Contains(@"""A"":""L-INFO-log4net.ext.json.xunit.Layout.Arrangements.Members""", le, "log line");
+            StringAssert.Contains(@"""A"":""L-INFO-log4net.Ext.Json.Xunit.Layout.Arrangements.Members""", le, "log line");
             StringAssert.Contains(@"""B"":""" + DateTime.Now.Year + @"""", le, "log line");
             StringAssert.Contains(@"""App"":""", le, "log line");
         }

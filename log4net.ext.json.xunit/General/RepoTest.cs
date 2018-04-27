@@ -8,7 +8,7 @@ using Is=NUnit.Framework.Is;
 using System.Xml;
 using log4net.Config;
 
-namespace log4net.ext.json.xunit.General
+namespace log4net.Ext.Json.Xunit.General
 {
     public class RepoTest
     {

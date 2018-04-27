@@ -8,7 +8,7 @@ using Is=NUnit.Framework.Is;
 using log4net.Core;
 using System.Diagnostics;
 
-namespace log4net.ext.json.xunit.Util.Stamps
+namespace log4net.Ext.Json.Xunit.Util.Stamps
 {
     public class StampTest
     {
