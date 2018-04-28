@@ -26,7 +26,6 @@ using log4net.Layout.Members;
 using log4net.ObjectRenderer;
 using log4net.Util;
 using log4net.Util.TypeConverters;
-using log4net.Util.Serializer;
 using log4net.Layout.Decorators;
 
 namespace log4net.Layout.Pattern
@@ -40,12 +39,12 @@ namespace log4net.Layout.Pattern
     /// Use it in a custom <see cref="PatternLayout.ConversionPattern" /> like this: "%serialize{DEFAULT;PID:processid}"
     /// </summary>
     /// <author>Robert Sevcik</author>
-    public class JsonPatternConverter : PatternLayoutConverter, IObjectRenderer, IOptionHandler, ISerializingPatternConverter
+    public class JsonPatternConverter : PatternLayoutConverter, IObjectRenderer, IOptionHandler
     {
         #region Properties
 
         /// <summary>
-        /// How to render the members is decided here. By default it is a <see cref="JsonObjectRenderer.Default"/>
+        /// How to render the members is decided here. By default it is a <see cref="JsonRenderer.Default"/>
         /// </summary>
         public IObjectRenderer Renderer { get; set; }
 
@@ -95,8 +94,6 @@ namespace log4net.Layout.Pattern
             }
         }
 
-
-
         /// <summary>
         /// Render what comes from the  <see cref="Fetcher" /> using  <see cref="Renderer" /> or default renderer.
         /// </summary>
@@ -126,7 +123,7 @@ namespace log4net.Layout.Pattern
 
             var renderer = Renderer
                 ?? (map == null ? null : map.Get(obj))
-                ?? JsonObjectRenderer.Default ?? map.DefaultRenderer;
+                ?? JsonRenderer.Default ?? map.DefaultRenderer;
 
             renderer.RenderObject(map, obj, writer);
         }
@@ -183,7 +180,7 @@ namespace log4net.Layout.Pattern
         /// <param name="fetcher">fetches an object from a logging event</param>
         /// <param name="renderer">serializes the object</param>
         /// <param name="decorators">decorates the object before serialization</param>
-        public virtual void SetUp(IArrangement arrangement, IEnumerable<ConverterInfo> converters, IRawLayout fetcher, IObjectRenderer renderer, IEnumerable<IDecorator> decorators)
+        protected virtual void SetUp(IArrangement arrangement, IEnumerable<ConverterInfo> converters, IRawLayout fetcher, IObjectRenderer renderer, IEnumerable<IDecorator> decorators)
         {
             var decoratorsArray = decorators == null ? null : Enumerable.ToArray(decorators);
             Fetcher = fetcher ?? Fetcher ?? CreateFetcher();
@@ -234,7 +231,7 @@ namespace log4net.Layout.Pattern
         /// <returns>renderer</returns>
         protected virtual IObjectRenderer CreateRenderer()
         {
-            return JsonObjectRenderer.Default;
+            return JsonRenderer.Default;
         }
 
         #endregion

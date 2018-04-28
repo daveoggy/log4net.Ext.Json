@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>log4net</RootNamespace>
     <AssemblyName>log4net.Ext.Json</AssemblyName>
-    <TargetFrameworks>net45;net40;net35;net20;netstandard2.0;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net452;net40;net35;net20;netstandard2.0;netstandard1.3</TargetFrameworks>
     <PackageId>log4net.Ext.Json</PackageId>
     <PackOnBuild>true</PackOnBuild>
     <Authors>Robert Cutajar</Authors>
@@ -15,13 +15,12 @@
     <Summary>Enable JSON logging in log4net</Summary>
     <Description>Enable JSON logging in log4net.</Description>
     <PackageTags>logging json</PackageTags>
-    <Version>2.0.8.1</Version>
-    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <Version>2.0.8.2</Version>
     <PackageIconUrl>https://github.com/BrightOpen/log4net.Ext.Json/raw/master/assets/icon.gif</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/BrightOpen/log4net.Ext.Json/blob/master/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net40' OR '$(TargetFramework)'=='net35' OR '$(TargetFramework)'=='net20'">
-    <DefineConstants>$(DefineConstants);JsonBuiltinSerializer;Net20Reflection</DefineConstants>
+    <DefineConstants>$(DefineConstants);Net20Reflection</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
     <DefineConstants>$(DefineConstants);LimitedEnvAccess</DefineConstants>

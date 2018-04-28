@@ -8,15 +8,13 @@ using Assert=NUnit.Framework.Assert;
 using StringAssert=NUnit.Framework.StringAssert;
 using log4net.Core;
 using System.Collections;
-using log4net.Util.Serializer;
 using log4net.Layout;
 using log4net.Layout.Pattern;
 using log4net.ObjectRenderer;
 
 namespace log4net.Ext.Json.Xunit.Log
 {
-	#if JsonBuiltinSerializer
-    public class WithBuiltinSerializer2 : RepoTest
+    public class WithJsonDotNetRenderer2 : RepoTest
     {
         protected override string GetConfig()
         {
@@ -28,8 +26,7 @@ namespace log4net.Ext.Json.Xunit.Log
 
                         <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
-                                <renderer type='log4net.ObjectRenderer.JsonObjectRenderer, log4net.Ext.Json'>
-                                  <serializer type='log4net.Util.Serializer.JsonBuiltinSerializer, log4net.Ext.Json' />
+                                <renderer type='log4net.ObjectRenderer.JsonDotNetRenderer, log4net.Ext.Json.Net'>
                                 </renderer>
                              <decorator type='log4net.Layout.Decorators.StandardTypesDecorator, log4net.Ext.Json' />
                              <member value='message:messageobject' />
@@ -50,9 +47,8 @@ namespace log4net.Ext.Json.Xunit.Log
             var layout = ((SerializedLayout)tapp.Layout);
             Assert.IsInstanceOf<JsonPatternConverter>(layout.SerializingConverter, "converter type");
             var converter = ((JsonPatternConverter)layout.SerializingConverter);
-            Assert.IsInstanceOf<JsonObjectRenderer>(converter.Renderer, "renderer type");
-            var renderer = ((JsonObjectRenderer)converter.Renderer);
-			Assert.IsInstanceOf<JsonBuiltinSerializer>(renderer.Serializer, "serializer type");
+            Assert.IsInstanceOf<JsonDotNetRenderer>(converter.Renderer, "renderer type");
+            var renderer = ((JsonDotNetRenderer)converter.Renderer);
 
             log.Info(new { A = 1, B = new { X = "Y" } });
 
@@ -69,6 +65,5 @@ namespace log4net.Ext.Json.Xunit.Log
 
         }
     }
-    #endif
 }
 

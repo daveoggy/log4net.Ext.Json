@@ -67,7 +67,7 @@ namespace log4net.Layout.Decorators
                             : String.Format("{0}.{1}", path, entry.Key)
                             ;
 
-                if (entry.Value == null)
+                if (entry.Value == null || DBNull.Value.Equals(entry.Value))
                 {
                     // ignore nulls
                 }
@@ -81,7 +81,7 @@ namespace log4net.Layout.Decorators
 
                     Standardise(ref obj, flatdict, name);
 
-                    if (obj != null)
+                    if (obj != null && !DBNull.Value.Equals(entry.Value))
                         flatdict[name] = obj;
                 }
             }

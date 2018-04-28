@@ -31,7 +31,7 @@ namespace log4net.Plugin
 {
     /// <summary>
     /// Not sure if this should stay. 
-    /// This log4net plugin will register <see cref="JsonObjectRenderer"/>
+    /// This log4net plugin will register <see cref="JsonRenderer"/>
     /// and add a "json" Conversion pattern to all <see cref="ILayout"/>s.
     /// </summary>
     /// <remarks>
@@ -104,7 +104,7 @@ namespace log4net.Plugin
         {
             var repo = sender as ILoggerRepository;
 
-            repo.RendererMap.Put(typeof(object), JsonObjectRenderer.Default);
+            repo.RendererMap.Put(typeof(object), JsonRenderer.Default);
             repo.RendererMap.Put(typeof(Exception), new DefaultRenderer());
             
             foreach (var appender in repo.GetAppenders())
