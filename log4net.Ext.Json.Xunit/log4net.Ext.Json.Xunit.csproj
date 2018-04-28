@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net452</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+    <ReleaseVersion>2.0.8.1</ReleaseVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.msbuild" Version="2.3.1" />
+    <PackageReference Include="xunit.assert" Version="2.3.1" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\log4net.Ext.Json\log4net.Ext.Json.csproj" />
+  </ItemGroup>
+    
+  <PropertyGroup Condition="'$(TargetFramework)'=='net40' OR '$(TargetFramework)'=='net35' OR '$(TargetFramework)'=='net20'">
+    <DefineConstants>$(DefineConstants);JsonBuiltinSerializer;Net20Reflection</DefineConstants>
+  </PropertyGroup>
+
+
+  <!--UsingTask AssemblyFile="$(OutputPath)xunit.runner.msbuild.net452.dll" TaskName="Xunit.Runner.MSBuild.xunit" /-->
+
+  <Target Name="test">
+    <xunit 
+	Assemblies="$(OutputPath)log4net.Ext.Json.Xunit.dll"  
+	ShadowCopy="false"
+	AppDomains="false"
+	/>
+  </Target>
+</Project>
