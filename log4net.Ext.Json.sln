@@ -1,9 +1,9 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json", "log4net.ext.json\log4net.Ext.Json.csproj", "{8134BEDF-346C-483B-89FE-479667F81B92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json", "log4net.Ext.Json\log4net.Ext.Json.csproj", "{8134BEDF-346C-483B-89FE-479667F81B92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.Xunit", "log4net.ext.json.xunit\log4net.Ext.Json.Xunit.csproj", "{CF8B425E-3BB9-477A-8464-8245040851CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.Xunit", "log4net.Ext.Json.Xunit\log4net.Ext.Json.Xunit.csproj", "{CF8B425E-3BB9-477A-8464-8245040851CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "playground", "playground\playground.csproj", "{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}"
 EndProject

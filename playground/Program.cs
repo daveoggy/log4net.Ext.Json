@@ -1,17 +1,17 @@
-﻿using System;
-using log4net.Util.Stamps;
+using System;
+using log4net;
+
+[assembly: log4net.Config.XmlConfigurator(ConfigFile="log4net.config", Watch=true)]
 
 namespace playground
 {
     class MainClass
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(MainClass));
+
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
-			var s = Stamp.GetProcessId();
-
-			Type.GetType("log4net.Layout.SerializedLayout, log4net.Ext.Json",true);
+            log.Info("Hello World!");
         }
     }
 }
