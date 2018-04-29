@@ -1,27 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Xunit;
 using Assert = NUnit.Framework.Assert;
 using StringAssert = NUnit.Framework.StringAssert;
 
-namespace log4net.Ext.Json.Xunit.Util.Serializer
+namespace log4net.Ext.Json.Xunit.ObjectRenderer
 {
 	public class Simple
 	{
-#if JsonBuiltinSerializer
-		log4net.Util.Serializer.ISerializer SerializerBuiltIn;
-#endif
-		log4net.Util.Serializer.ISerializer SerializerHomeMade;
+		log4net.ObjectRenderer.IJsonRenderer _serializerHomeMade;
+		log4net.ObjectRenderer.IJsonRenderer _serializerJsonDotNet;
 
 		public Simple()
 		{
-
-#if JsonBuiltinSerializer
-			SerializerBuiltIn = new log4net.Util.Serializer.JsonBuiltinSerializer ();
-#endif
-			SerializerHomeMade = new log4net.Util.Serializer.JsonHomebrewSerializer();
+			_serializerHomeMade = new log4net.ObjectRenderer.JsonRenderer();
+			_serializerJsonDotNet = new log4net.ObjectRenderer.JsonDotNetRenderer();
 		}
 
 		[Theory]
@@ -38,20 +34,22 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[InlineData('*', @"""*""", @"""*""")]
 		[InlineData((byte)168, @"168", @"""\uFFFD""")]
 
-		[InlineData("xxx &;", @"""xxx &;""", @"""xxx \u0026;""")]
-		[InlineData("ěščřžýáíé■", // builtin leaves unicode chars as is, homemade escapes them producing ASCII
+		[InlineData("xxx &;", @"""xxx &;""", @"""xxx &;""")]
+		[InlineData("ěščřžýáíé■", // JsonDotNet leaves unicode chars as is, homemade escapes them producing ASCII
 			@"""ěščřžýáíé■""",
 			@"""\u011B\u0161\u010D\u0159\u017E\u00FD\u00E1\u00ED\u00E9\u25A0""")]
 		[InlineData("\"\\\b\f\n\r\t", @"""\""\\\b\f\n\r\t""", @"""\""\\\b\f\n\r\t""")]
-		[InlineData("</>", @"""\u003c/\u003e""", @"""\u003c/\u003e""")]
-		public void Serialize(object value, string expectedBuiltin, string expectedHomeMade)
+		[InlineData("</>", @"""</>""", @"""</>""")]
+		public void Serialize(object value, string expectedJsonDotNet, string expectedHomeMade)
 		{
+			var wrJsonDotNet = new StringWriter();
+			_serializerJsonDotNet.RenderObject(null, value, wrJsonDotNet);
+			var resultJsonDotNet = wrJsonDotNet.ToString();
+			StringAssert.StartsWith(expectedJsonDotNet, resultJsonDotNet, String.Format ("JsonDotNet serialized {0}", value));
 
-#if JsonBuiltinSerializer
-			var resultBuiltIn = SerializerBuiltIn.Serialize (value, null);
-			StringAssert.StartsWith(expectedBuiltin, resultBuiltIn, String.Format ("BuiltIn serialized {0}", value));
-#endif
-			var resultHomeMade = SerializerHomeMade.Serialize(value, null) as string;
+			var wrHomeMade = new StringWriter();
+			_serializerHomeMade.RenderObject(null, value, wrHomeMade);
+			var resultHomeMade = wrHomeMade.ToString();
 			StringAssert.StartsWith(expectedHomeMade, resultHomeMade, String.Format("HomeMade serialized {0}", value));
 		}
 
@@ -76,7 +74,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeDBNull()
 		{
-			Serialize(DBNull.Value, "null", "null");
+			Serialize(DBNull.Value, "{}", "null");
 		}
 
 		[Fact]
@@ -88,7 +86,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeEnumFlags()
 		{
-			// builtin works enums into numbers, homemade into names
+			// JsonDotNet works enums into numbers, homemade into names
 			Serialize(System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline,
 				@"10",
 				@"""Multiline, Compiled""");
@@ -97,7 +95,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeEnumSingle()
 		{
-			// builtin works enums into numbers, homemade into names
+			// JsonDotNet works enums into numbers, homemade into names
 			Serialize(System.Text.RegularExpressions.RegexOptions.Compiled,
 				@"8",
 				@"""Compiled""");
@@ -121,7 +119,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeBytes()
 		{
-			Serialize(new byte[] { 65, 255, 0, 128 }, @"[65,255,0,128]", @"""A\uFFFD\u0000\uFFFD""");
+			Serialize(new byte[] { 65, 255, 0, 128 }, @"""Qf8AgA==""", @"""A\uFFFD\u0000\uFFFD""");
 		}
 
 		/// <summary>
@@ -130,7 +128,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeChars()
 		{
-			Serialize(new char[] { 'A', '¿', char.MinValue, '├' }, @"[""A"",""¿"",null,""├""]", @"""A\u00BF\u0000\u251C""");
+			Serialize(new char[] { 'A', '¿', char.MinValue, '├' }, @"[""A"",""¿"",""\u0000"",""├""]", @"""A\u00BF\u0000\u251C""");
 		}
 
 		/// <summary>
@@ -139,7 +137,7 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeDateTime()
 		{
-			Serialize(DateTime.Parse("2014-01-01 00:00:01"), @"""\/Date(1388534401000)\/""", @"""2014-01-01T00:00:01.0000000""");
+			Serialize(DateTime.Parse("2014-01-01 00:00:01"), @"""2014-01-01T00:00:01""", @"""2014-01-01T00:00:01.0000000""");
 		}
 
 		/// <summary>
@@ -148,9 +146,9 @@ namespace log4net.Ext.Json.Xunit.Util.Serializer
 		[Fact]
 		public void SerializeTimeSpan()
 		{
-			// builtin handles TimeSpan as any object serializing it's fields and props, homemeade ony does seconds
+			// JsonDotNet handles TimeSpan as any object serializing it's fields and props, homemeade ony does seconds
 			Serialize(TimeSpan.Parse("3.00:00:01.1234567"),
-				@"{""Days"":3,""Hours"":0,""Milliseconds"":123,""Minutes"":0,""Seconds"":1,""Ticks"":2592011234567,""TotalDays"":3.0000130029710648,""TotalHours"":72.000312071305558,""TotalMilliseconds"":259201123.4567,""TotalMinutes"":4320.0187242783331,""TotalSeconds"":259201.1234567}",
+				@"""3.00:00:01.1234567""",
 				@"259201.12345");
 		}
 

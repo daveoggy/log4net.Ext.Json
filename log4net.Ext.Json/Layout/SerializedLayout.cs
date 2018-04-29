@@ -327,7 +327,10 @@ namespace log4net.Layout
             if (SerializingConverter == null)
                 base.Format(writer, loggingEvent);
             else
+            {
                 SerializingConverter.Format(writer, loggingEvent);
+                writer.WriteLine();
+            }
         }
 
         #endregion
@@ -356,10 +359,10 @@ namespace log4net.Layout
         }
 
         /// <summary>
-        /// Add <see cref="PatternConverter.Properties"/> or make use of <see cref="ISerializingPatternConverter.SetUp"/>, 
+        /// Add <see cref="PatternConverter.Properties"/>, 
         /// call <see cref="IOptionHandler.ActivateOptions"/> 
         /// </summary>
-        /// <param name="conv">serializer to be set up, see also <seealso cref="ISerializingPatternConverter"/></param>
+        /// <param name="conv">serializer to be set up</param>
         /// <param name="converters">converters to be used collected from parent class</param>
         /// <param name="arrangement">arrangement to be used collected from parent class</param>
         /// <param name="fetcher">fetcher to use</param>
@@ -372,21 +375,11 @@ namespace log4net.Layout
         /// </remarks>
         protected virtual void SetUpSerializingConverter(PatternConverter conv, ConverterInfo[] converters, IArrangement arrangement, IRawLayout fetcher, IObjectRenderer renderer, IDecorator[] decorators)
         {
-            var serializedConv = conv as ISerializingPatternConverter;
-
-            if (serializedConv != null)
-            {
-                serializedConv.SetUp(arrangement, converters, fetcher, renderer, decorators);
-            }
-            else
-            {
-                LogLog.Warn(GetType(), String.Format("Converter is not a ISerializingPatternConverter: {0}. Passing fetcher, renderer, decorators, arrangement and converters as properties.", conv));
-                conv.Properties["arrangement"] = arrangement;
-                conv.Properties["converters"] = converters;
-                conv.Properties["fetcher"] = fetcher;
-                conv.Properties["renderer"] = renderer;
-                conv.Properties["decorators"] = decorators;
-            }
+            conv.Properties["arrangement"] = arrangement;
+            conv.Properties["converters"] = converters;
+            conv.Properties["fetcher"] = fetcher;
+            conv.Properties["renderer"] = renderer;
+            conv.Properties["decorators"] = decorators;
 
             IOptionHandler optionHandler = conv as IOptionHandler;
             if (optionHandler != null)

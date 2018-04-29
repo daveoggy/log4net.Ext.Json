@@ -7,11 +7,11 @@ using Xunit;
 
 namespace log4net.Ext.Json.Xunit.Layout.Arrangements
 {
-    public class NoMembers : RepoTest
-    {
-        protected override string GetConfig()
-        {
-            return @"<log4net>
+	public class NoMembers : RepoTest
+	{
+		protected override string GetConfig()
+		{
+			return @"<log4net>
                         <root>
                           <level value='DEBUG'/>
                           <appender-ref ref='TestAppender'/>
@@ -22,23 +22,24 @@ namespace log4net.Ext.Json.Xunit.Layout.Arrangements
                             <remove />
                           </layout>
                         </appender>
-                      </log4net>"; 
-        }
+                      </log4net>";
+		}
 
-        protected override void RunTestLog(log4net.ILog log)
-        {
-            log.Info("Hola!");
+		protected override void RunTestLog(log4net.ILog log)
+		{
+			log.Info("Hola!");
 
-            var events = GetEventStrings(log.Logger);
+			var events = GetEventStrings(log.Logger);
 
-            Assert.Equal(1, events.Length/*, "events Count"*/);
+			Assert.Collection(events, (le) =>
+			{
+				Assert.NotNull(le);
 
-            var le = events.Single();
+				Assert.Equal(@"""Hola!""" + Environment.NewLine, le /*, "log line has no members - just plain message"*/);
+			});
 
-            Assert.NotNull(le);
 
-			Assert.Equal(@"""Hola!""" + Environment.NewLine, le /*, "log line has no members - just plain message"*/);
-        }
-    }
+		}
+	}
 }
 

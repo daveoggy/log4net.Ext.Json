@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json", "log4net.Ext.Json\log4net.Ext.Json.csproj", "{8134BEDF-346C-483B-89FE-479667F81B92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.Net", "log4net.Ext.Json.Net\log4net.Ext.Json.Net.csproj", "{AAAAAAAA-3BB9-477A-8464-8245040851CE}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.Ext.Json.Xunit", "log4net.Ext.Json.Xunit\log4net.Ext.Json.Xunit.csproj", "{CF8B425E-3BB9-477A-8464-8245040851CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "playground", "playground\playground.csproj", "{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "play", "play\play.csproj", "{2B0D4E0E-661E-4B98-8418-68538D1FDBFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,16 +19,17 @@ Global
 		{8134BEDF-346C-483B-89FE-479667F81B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8134BEDF-346C-483B-89FE-479667F81B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8134BEDF-346C-483B-89FE-479667F81B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAAAAAAA-3BB9-477A-8464-8245040851CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAAAAAAA-3BB9-477A-8464-8245040851CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAAAAAAA-3BB9-477A-8464-8245040851CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAAAAAAA-3BB9-477A-8464-8245040851CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF8B425E-3BB9-477A-8464-8245040851CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CF8B425E-3BB9-477A-8464-8245040851CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF8B425E-3BB9-477A-8464-8245040851CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF8B425E-3BB9-477A-8464-8245040851CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C9E00EE-19C1-47B5-9A78-17DEBD8B87B8}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		version = 2.0.8.1
+		{2B0D4E0E-661E-4B98-8418-68538D1FDBFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0D4E0E-661E-4B98-8418-68538D1FDBFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B0D4E0E-661E-4B98-8418-68538D1FDBFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B0D4E0E-661E-4B98-8418-68538D1FDBFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

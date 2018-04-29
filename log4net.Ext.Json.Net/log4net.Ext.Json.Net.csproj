@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>log4net</RootNamespace>
+    <AssemblyName>log4net.Ext.Json.Net</AssemblyName>
+    <TargetFrameworks>net452;net40;net35;net20;netstandard2.0;netstandard1.3</TargetFrameworks>
+    <PackageId>log4net.Ext.Json.Net</PackageId>
+    <PackOnBuild>true</PackOnBuild>
+    <Authors>Robert Cutajar</Authors>
+    <Owners>Robert Cutajar</Owners>
+    <Copyright>Copyright (c) 2018 Robert Cutajar</Copyright>
+    <PackageProjectUrl>https://github.com/BrightOpen/log4net.Ext.Json</PackageProjectUrl>
+    <Title>log4net.Ext.Json.Net</Title>
+    <Summary>Use Newtonsoft.Json (Json.NET) as a serializer</Summary>
+    <Description>Use Newtonsoft.Json (Json.NET) as a serializer.</Description>
+    <PackageTags>logging json</PackageTags>
+    <Version>2.0.8.2</Version>
+    <PackageIconUrl>https://github.com/BrightOpen/log4net.Ext.Json/raw/master/assets/icon.gif</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/BrightOpen/log4net.Ext.Json/blob/master/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\log4net.Ext.Json\log4net.Ext.Json.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Util\" />
+    <Folder Include="Util\JsonDotNet\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Util\Newtonsoft\SerializerConverter.cs" />
+    <Compile Remove="Util\JsonDotNet\SerializerConverter.cs" />
+  </ItemGroup>
+  <Target Name="test">
+  </Target>
+</Project>

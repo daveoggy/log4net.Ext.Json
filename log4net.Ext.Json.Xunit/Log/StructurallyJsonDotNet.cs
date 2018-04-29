@@ -11,8 +11,7 @@ using System.Collections;
 
 namespace log4net.Ext.Json.Xunit.Log
 {
-	#if JsonBuiltinSerializer
-	public class StructurallyStandardBuiltin : RepoTest
+	public class StructurallyJsonDotNetIn : RepoTest
     {
         protected override string GetConfig()
         {
@@ -24,9 +23,7 @@ namespace log4net.Ext.Json.Xunit.Log
 
                         <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
-                            <decorator type='log4net.Layout.Decorators.StandardTypesDecorator, log4net.Ext.Json' />
-                            <renderer type='log4net.ObjectRenderer.JsonObjectRenderer, log4net.Ext.Json'>
-                              <serializer type='log4net.Util.Serializer.JsonBuiltinSerializer, log4net.Ext.Json' />
+                            <renderer type='log4net.ObjectRenderer.JsonDotNetRenderer, log4net.Ext.Json.Net'>
                             </renderer>
                             <default />
                             <remove value='message' />
@@ -49,10 +46,9 @@ namespace log4net.Ext.Json.Xunit.Log
             Assert.IsNotNull(le, "loggingevent");
 
             StringAssert.Contains(@"""A"":1", le, "le has structured message");
-            StringAssert.Contains(@"""X"":""2014-01-01T00:00:00.0000000""", le, "le has structured message");
+            StringAssert.Contains(@"""X"":""2014-01-01", le, "le has structured message");
 
         }
     }
-    #endif
 }
 

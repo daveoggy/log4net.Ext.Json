@@ -24,8 +24,7 @@ namespace log4net.Ext.Json.Xunit.Log
                         <appender name='TestAppender' type='log4net.Ext.Json.Xunit.General.TestAppender, log4net.Ext.Json.Xunit'>
                           <layout type='log4net.Layout.SerializedLayout, log4net.Ext.Json'>
                              <serializingconverter type='log4net.Layout.Pattern.JsonPatternConverter, log4net.Ext.Json'>
-                                <renderer type='log4net.ObjectRenderer.JsonObjectRenderer, log4net.Ext.Json'>
-                                  <serializer type='log4net.Util.Serializer.JsonHomebrewSerializer, log4net.Ext.Json' />
+                                <renderer type='log4net.ObjectRenderer.JsonRenderer, log4net.Ext.Json'>
                                 </renderer>
                              </serializingconverter>
                             <default />

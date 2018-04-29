@@ -13,33 +13,35 @@ namespace log4net.Layout.Decorators
     public class StandardTypesDecorator : IDecorator
     {
         /// <summary>
-        /// preserve object type in serialization. true => always, false => never, null => only if class is publicly visible
+        /// preserve object type in serialization. true => visible types, false => never. Default: false
         /// </summary>
-        public bool? SaveType { get; set; }
+        public bool SaveType { get; set; }
+        /// <summary>
+        /// preserve object type in serialization. true => also invisible types, false => only visible. Default: false
+        /// </summary>
+        public bool SaveInternalType { get; set; }
 
         /// <summary>
-        /// Call ToString and save the string
+        /// Call ToString and save the string. Default false.
         /// </summary>
-        public bool? Stringify { get; set; }
+        public bool Stringify { get; set; }
 
         /// <summary>
-        /// if <see cref="SaveType"/> then this is the name it will be saved as
+        /// if <see cref="SaveType"/> then this is the name it will be saved as. Default "__type".
         /// </summary>
-        public string TypeMemberName { get; set; }
+        public string TypeMemberName { get; set; } = "__type";
 
         /// <summary>
-        /// if <see cref="Stringify"/> then this is the name it will be saved as
+        /// if <see cref="Stringify"/> then this is the name it will be saved as.null Default "String".
         /// </summary>
-        public string StringMemberName { get; set; }
+        public string StringMemberName { get; set; } = "String";
 
 
         /// <summary>
-        /// default constructor - <see cref="TypeMemberName"/> is "@type" and <see cref="SaveType"/> is null
+        /// default constructor
         /// </summary>
         public StandardTypesDecorator()
         {
-            SaveType = null;
-            TypeMemberName = "@type";
         }
 
         /// <summary>
@@ -100,7 +102,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done</returns>
         protected virtual bool StandardNull(object obj, ref object result)
         {
-            return obj == null;
+            return obj == null || DBNull.Value.Equals(obj);
         }
 
         /// <summary>
@@ -372,7 +374,7 @@ namespace log4net.Layout.Decorators
         /// <returns>true if it's all done</returns>
         protected virtual bool StandardObject(object obj, ref object result, IDictionary flatdict, string path = null)
         {
-            return StandardDictionary(log4net.Util.Serializer.JsonHomebrewSerializer.ObjToDict(obj, SaveType, TypeMemberName, Stringify, StringMemberName), ref result, flatdict, path);
+			return StandardDictionary(log4net.ObjectRenderer.JsonRenderer.ObjToDict(obj, SaveType, SaveInternalType, TypeMemberName, Stringify, StringMemberName), ref result, flatdict, path);
         }
 
 

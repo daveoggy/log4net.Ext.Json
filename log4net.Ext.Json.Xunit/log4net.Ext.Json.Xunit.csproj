@@ -4,7 +4,6 @@
     <TargetFramework>net452</TargetFramework>
 
     <IsPackable>false</IsPackable>
-    <ReleaseVersion>2.0.8.1</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,20 +18,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\log4net.Ext.Json\log4net.Ext.Json.csproj" />
+    <ProjectReference Include="..\log4net.Ext.Json.Net\log4net.Ext.Json.Net.csproj" />
   </ItemGroup>
     
   <PropertyGroup Condition="'$(TargetFramework)'=='net40' OR '$(TargetFramework)'=='net35' OR '$(TargetFramework)'=='net20'">
-    <DefineConstants>$(DefineConstants);JsonBuiltinSerializer;Net20Reflection</DefineConstants>
+    <DefineConstants>$(DefineConstants);Net20Reflection</DefineConstants>
   </PropertyGroup>
 
 
   <!--UsingTask AssemblyFile="$(OutputPath)xunit.runner.msbuild.net452.dll" TaskName="Xunit.Runner.MSBuild.xunit" /-->
 
   <Target Name="test">
-    <xunit 
-	Assemblies="$(OutputPath)log4net.Ext.Json.Xunit.dll"  
-	ShadowCopy="false"
-	AppDomains="false"
-	/>
+    <xunit Assemblies="$(OutputPath)log4net.Ext.Json.Xunit.dll" ShadowCopy="false" AppDomains="false" />
   </Target>
 </Project>
