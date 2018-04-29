@@ -24,18 +24,21 @@ using Newtonsoft.Json;
 namespace log4net.ObjectRenderer
 {
     /// <summary>
-    /// Use the Newtonsoft.Json serializer with support for RendererMap
+    /// Use the Newtonsoft.Json serializer to render log4net output
     /// </summary>
     /// <author>Robert Cutajar</author>
     public class JsonDotNetRenderer : JsonSerializerSettings, IJsonRenderer
     {
         /// <summary>
-        /// Serialize value with map lookup for other renderers
+        /// Serialize value into text writer
         /// </summary>
-        /// <param name="rendererMap">Renderer map</param>
+        /// <remarks>
+        /// I've tried and failed to support the RendereMap here in some 
+        /// decent way. Pull requests welcome. Until then, map is ignored.
+        /// </remarks>
+        /// <param name="rendererMap">Renderer map - ignored</param>
         /// <param name="value">Value to be serialized</param>
         /// <param name="writer">Where JSON will be written</param>
-        /// <returns>Serialized value</returns>
         public void RenderObject(RendererMap rendererMap, object value, TextWriter writer)
         {
             var json = Serialize(value, rendererMap);
@@ -58,13 +61,10 @@ namespace log4net.ObjectRenderer
             => obj == null ? typeof(void) : obj.GetType();
 
         /// <summary>
-        /// Create json settings per call 
-        /// because there is no simple way to extend the contract resolver per call
+        /// Get Json.NET settings 
         /// </summary>
         /// <remarks>
-        /// If you need to modify the settings for your case, 
-        /// you can extend and override this, just be careful about the ContractResolver. 
-        /// It should be the <see cref="RendererMapContractResolver" />.
+        /// This object itself is the settings. RendererMap is not supported.
         /// </remarks>
         /// <param name="obj">Value to be serialized</param>
         /// <param name="type">Type to serialize as</param>
@@ -72,6 +72,5 @@ namespace log4net.ObjectRenderer
         /// <returns>Settings for this call</returns>
         protected virtual JsonSerializerSettings GetSettings(object obj, Type type, RendererMap map)
             => this;
-
     }
 }
