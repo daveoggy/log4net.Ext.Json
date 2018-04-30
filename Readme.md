@@ -252,6 +252,6 @@ Note the "YourAppender" part. That's the name of the appender you want to pulse.
 
 ## Fare well
 
-I hope you'll make the world a better place with this tool at hand, nothing less :D
+I hope you'll make the world a better place with this tool at hand. Nothing less :D
 
 Good luck and happy logging.
