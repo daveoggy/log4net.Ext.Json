@@ -266,7 +266,7 @@ namespace log4net.Layout.Members
         /// <returns>success of finding a NestedLayout not null</returns>
         protected virtual bool GetDefaultValue(Core.LoggingEvent loggingEvent, out object obj)
         {
-            obj = Option ?? Name;
+            obj = Option;
             return true;
         }
 

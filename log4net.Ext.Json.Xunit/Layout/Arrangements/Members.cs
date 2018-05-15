@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using log4net.Ext.Json.Xunit.General;
 using Xunit;
-using Assert=NUnit.Framework.Assert;
-using StringAssert=NUnit.Framework.StringAssert;
-using Is=NUnit.Framework.Is;
+using Assert = NUnit.Framework.Assert;
+using StringAssert = NUnit.Framework.StringAssert;
+using Is = NUnit.Framework.Is;
 using System.Diagnostics;
 
 namespace log4net.Ext.Json.Xunit.Layout.Arrangements
@@ -28,12 +28,14 @@ namespace log4net.Ext.Json.Xunit.Layout.Arrangements
                             <member value='B%date:yyyy' /> <!-- (%:) one pattern layout conversion pattern with optional option -->
                             <member value='Host=ProcessId\;HostName' /> <!-- (=) nested structure, escape ; -->
                             <member value='App:appname' /> <!-- named member -->
+                            <member value='empty1' /> <!-- empty member -->
+                            <member value='empty2:EmPty2' /> <!-- empty named member -->
                           </layout>
                         </appender>
                       </log4net>";
         }
 
-		protected override void RunTestLog(log4net.ILog log)
+        protected override void RunTestLog(log4net.ILog log)
         {
             log4net.GlobalContext.Properties["OurCompany.ApplicationName"] = "fubar";
 
@@ -56,6 +58,10 @@ namespace log4net.Ext.Json.Xunit.Layout.Arrangements
             StringAssert.Contains(@"""A"":""L-INFO-log4net.Ext.Json.Xunit.Layout.Arrangements.Members""", le, "log line");
             StringAssert.Contains(@"""B"":""" + DateTime.Now.Year + @"""", le, "log line");
             StringAssert.Contains(@"""App"":""", le, "log line");
+
+            // fix #3, do not use member name as a default value
+            StringAssert.DoesNotContain("empty1", le);
+            StringAssert.DoesNotContain("empty2", le);
         }
     }
 }

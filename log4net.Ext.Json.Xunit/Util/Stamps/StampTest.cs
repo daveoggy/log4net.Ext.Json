@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
-using Assert=NUnit.Framework.Assert;
-using Is=NUnit.Framework.Is;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
 using log4net.Core;
 using System.Diagnostics;
 
@@ -16,8 +16,7 @@ namespace log4net.Ext.Json.Xunit.Util.Stamps
         {
             logger = logger ?? GetType();
             level = level ?? Level.Info;
-            var repo = LogManager.GetRepository();
-            var le = new LoggingEvent(logger, repo, logger.FullName, level, message, exception);
+            var le = new LoggingEvent(logger, null, logger.FullName, level, message, exception);
             return le;
         }
 

@@ -74,7 +74,7 @@ namespace log4net.Ext.Json.Xunit.ObjectRenderer
 		[Fact]
 		public void SerializeDBNull()
 		{
-			Serialize(DBNull.Value, "{}", "null");
+			Serialize(DBNull.Value, "null", "null");
 		}
 
 		[Fact]

@@ -15,7 +15,7 @@
     <Summary>Enable JSON logging in log4net</Summary>
     <Description>Enable JSON logging in log4net.</Description>
     <PackageTags>logging json</PackageTags>
-    <Version>2.0.8.2</Version>
+    <VersionPrefix>2.0.8.3</VersionPrefix>
     <PackageIconUrl>https://github.com/BrightOpen/log4net.Ext.Json/raw/master/assets/icon.gif</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/BrightOpen/log4net.Ext.Json/blob/master/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
