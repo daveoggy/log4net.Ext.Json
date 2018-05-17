@@ -35,6 +35,4 @@
     <Compile Remove="Util\Newtonsoft\SerializerConverter.cs" />
     <Compile Remove="Util\JsonDotNet\SerializerConverter.cs" />
   </ItemGroup>
-  <Target Name="test">
-  </Target>
 </Project>
