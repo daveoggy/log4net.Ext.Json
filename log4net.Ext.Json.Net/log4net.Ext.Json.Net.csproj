@@ -15,9 +15,11 @@
     <Summary>Use Newtonsoft.Json (Json.NET) as a serializer</Summary>
     <Description>Use Newtonsoft.Json (Json.NET) as a serializer.</Description>
     <PackageTags>logging json</PackageTags>
-    <Version>2.0.8.2</Version>
+    <Version>2.0.8.2-PR</Version>
     <PackageIconUrl>https://github.com/BrightOpen/log4net.Ext.Json/raw/master/assets/icon.gif</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/BrightOpen/log4net.Ext.Json/blob/master/log4net.Ext.Json/log4net.Ext.Json.LICENSE.txt</PackageLicenseUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Modified to use Use Newtonsoft.Json 6.0.6</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
